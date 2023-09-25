@@ -30,7 +30,7 @@ public class User implements UserDetails {
     private String password;
     @Column(nullable = false)
     private Boolean isActive;
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     private Set<Role> roles;
 
     @Override

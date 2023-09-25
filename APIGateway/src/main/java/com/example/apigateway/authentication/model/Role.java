@@ -19,6 +19,6 @@ public class Role {
     private Long id;
     @Column(nullable = false, unique = true)
     private String name;
-    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.MERGE},fetch = FetchType.EAGER)
     private Set<Privilege> privileges;
 }
