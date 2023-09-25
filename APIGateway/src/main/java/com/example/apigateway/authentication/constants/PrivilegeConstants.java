@@ -1,5 +1,8 @@
 package com.example.apigateway.authentication.constants;
 
+import org.springframework.stereotype.Component;
+
+@Component("Privilege")
 public final class PrivilegeConstants {
     public static final String PROJECT_INFO = "Project Info";
     public static final String PROJECT_CREATE = "Project Create";
