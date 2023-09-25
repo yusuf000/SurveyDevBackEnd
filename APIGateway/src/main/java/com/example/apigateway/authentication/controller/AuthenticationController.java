@@ -18,16 +18,16 @@ public class AuthenticationController {
     private final AuthenticationService service;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(
+    public ResponseEntity<Boolean> register(
             @RequestBody RegisterRequest request
-    ) throws IllegalArgumentException{
+    ) {
         return ResponseEntity.ok(service.register(request));
     }
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
-    ){
+    ) throws Exception {
         return ResponseEntity.ok(service.authenticate(request));
     }
 }

@@ -17,8 +17,7 @@ import java.util.stream.Collectors;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "user")
+@Entity(name = "user")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,6 +28,8 @@ public class User implements UserDetails {
     private String email;
     @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
+    private Boolean isActive;
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private Set<Role> roles;
 
