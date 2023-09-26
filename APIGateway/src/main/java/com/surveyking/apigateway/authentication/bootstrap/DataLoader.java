@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static com.surveyking.apigateway.authentication.constants.PrivilegeConstants.*;
+import static com.surveyking.apigateway.authentication.constants.RoleConstants.SUPER_ADMIN;
 
 @Component
 @RequiredArgsConstructor
@@ -60,7 +61,7 @@ public class DataLoader implements CommandLineRunner {
 
     private void createAdminRole() {
         Role roleAdmin = Role.builder()
-                .name("Super Admin")
+                .name(SUPER_ADMIN)
                 .privileges(new HashSet<>(privilegeRepository.findAll()))
                 .build();
         roleRepository.save(roleAdmin);
@@ -72,7 +73,7 @@ public class DataLoader implements CommandLineRunner {
                 .email("admin@gmail.com")
                 .password(passwordEncoder.encode("admin"))
                 .isActive(true)
-                .roles(Set.of(roleRepository.findByName("Super Admin")))
+                .roles(Set.of(roleRepository.findByName(SUPER_ADMIN)))
                 .build();
         userRepository.save(userAdmin);
     }
