@@ -10,15 +10,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "language")
-public class Language {
+@Entity(name = "question_type")
+public class QuestionType {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String name;
-
-    @Column(nullable = false, unique = true, length = 4)
-    private String code;
+    @Column(nullable = false)
+    private String value;
 }

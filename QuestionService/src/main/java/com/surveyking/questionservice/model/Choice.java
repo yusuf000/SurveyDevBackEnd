@@ -6,19 +6,24 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "language")
-public class Language {
+@Entity(name = "choice")
+public class Choice {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String name;
+    @Column(nullable = false)
+    private Long serial;
 
-    @Column(nullable = false, unique = true, length = 4)
-    private String code;
+    @Column(nullable = false)
+    private String value;
+
+    @ManyToMany
+    private Set<Choice> choices;
 }
