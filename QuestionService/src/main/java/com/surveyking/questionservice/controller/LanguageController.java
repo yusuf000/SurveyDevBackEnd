@@ -23,7 +23,7 @@ public class LanguageController {
         return ResponseEntity.ok(languageService.save(request));
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<List<Language>> get(){
         return ResponseEntity.ok(languageService.get());
     }

@@ -24,7 +24,7 @@ public class QuestionTypeController {
         return ResponseEntity.ok(questionTypeService.save(questionType));
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<List<QuestionType>> get(){
         return ResponseEntity.ok(questionTypeService.get());
     }
