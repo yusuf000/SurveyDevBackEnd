@@ -1,5 +1,6 @@
-package com.surveyking.questionservice.model;
+package com.surveyking.questionservice.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.surveyking.questionservice.util.Constants;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private Long id;
 
     @Column(nullable = false, length = 45)
@@ -35,8 +37,8 @@ public class Project {
     @Column(nullable = false, length = 20)
     private String status;
 
-    @Column(unique = true, nullable = false, length = 20)
-    private String sascode;
+    @Column(name = Constants.sasCode, unique = true, nullable = false, length = 20)
+    private String sasCode;
 
     @Column(name = Constants.jobNumber, nullable = false, length = 20)
     private Long jobNumber;

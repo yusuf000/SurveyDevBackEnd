@@ -1,5 +1,6 @@
-package com.surveyking.questionservice.model;
+package com.surveyking.questionservice.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +19,7 @@ import java.util.Set;
 public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private Long id;
 
     @Column(nullable = false)
@@ -33,6 +35,7 @@ public class Question {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
     private Project project;
 
     @Column(nullable = false, length = 1000)
