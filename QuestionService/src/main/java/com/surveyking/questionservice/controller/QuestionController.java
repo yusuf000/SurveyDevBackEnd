@@ -21,6 +21,10 @@ public class QuestionController {
         return ResponseEntity.ok(questionService.save(request));
     }
 
+    @PostMapping("/delete")
+    public ResponseEntity<Boolean> delete(@RequestParam("questionId") Long questionId){
+        return ResponseEntity.ok(questionService.delete(questionId));
+    }
     @GetMapping("")
     public ResponseEntity<List<Question>> get(@RequestParam("sasCode") String sasCode){
         return ResponseEntity.ok(questionService.get(sasCode));

@@ -21,6 +21,12 @@ public class ChoiceController {
         return ResponseEntity.ok(choiceService.add(request));
     }
 
+
+    @GetMapping("/delete")
+    public ResponseEntity<Boolean> delete(@RequestParam("choiceId") Long choiceId){
+        return ResponseEntity.ok(choiceService.delete(choiceId));
+    }
+
     @GetMapping("")
     public ResponseEntity<List<Choice>> get(@RequestParam("questionId") Long questionId){
         return ResponseEntity.ok(choiceService.get(questionId));

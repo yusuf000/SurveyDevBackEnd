@@ -33,6 +33,13 @@ public class ChoiceService {
         return true;
     }
 
+
+    public boolean delete(Long choiceId) {
+        choiceRepository.deleteById(choiceId);
+        return true;
+    }
+
+
     public List<Choice> get(Long questionId) {
         Optional<Question> question = questionRepository.findById(questionId);
         if (question.isEmpty()) return Collections.emptyList();

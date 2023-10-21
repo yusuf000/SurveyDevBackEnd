@@ -25,7 +25,7 @@ public class QuestionService {
     private final ProjectRepository projectRepository;
     private final QuestionTypeRepository questionTypeRepository;
 
-    public boolean save(QuestionRequest request){
+    public boolean save(QuestionRequest request) {
         Optional<Language> language = languageRepository.findLanguageByCode(
                 request.getLanguageCode()
         );
@@ -35,7 +35,7 @@ public class QuestionService {
         Optional<QuestionType> questionType = questionTypeRepository.findQuestionTypeByName(
                 request.getQuestionType()
         );
-        if(language.isEmpty() || project.isEmpty() || questionType.isEmpty()) return false;
+        if (language.isEmpty() || project.isEmpty() || questionType.isEmpty()) return false;
         Question question = Question.builder()
                 .serial(request.getSerial())
                 .language(language.get())
@@ -51,7 +51,12 @@ public class QuestionService {
         Optional<Project> project = projectRepository.findProjectBySasCode(
                 sasCode
         );
-        if(project.isEmpty()) return Collections.emptyList();
+        if (project.isEmpty()) return Collections.emptyList();
         return questionRepository.findAllByProject(project.get());
+    }
+
+    public boolean delete(Long questionId) {
+        questionRepository.deleteById(questionId);
+        return true;
     }
 }

@@ -19,7 +19,6 @@ import java.util.Set;
 public class Choice {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @JsonIgnore
     private Long id;
 
     @ManyToOne
@@ -33,6 +32,6 @@ public class Choice {
     @Column(nullable = false)
     private String value;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Choice> choices;
 }
