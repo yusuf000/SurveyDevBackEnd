@@ -16,9 +16,9 @@ import java.util.List;
 public class QuestionController {
     private final QuestionService questionService;
 
-    @PostMapping("/save")
-    public ResponseEntity<Boolean> save(@RequestBody QuestionRequest request){
-        return ResponseEntity.ok(questionService.save(request));
+    @PostMapping("/add")
+    public ResponseEntity<Boolean> add(@RequestBody QuestionRequest request){
+        return ResponseEntity.ok(questionService.add(request));
     }
 
     @PostMapping("/delete")

@@ -8,10 +8,7 @@ import com.surveyking.questionservice.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -29,8 +26,18 @@ public class ChoiceService {
                 .question(question.get())
                 .choices(new HashSet<>(request.getChoices()))
                 .build();
+        setParent(choice, choice.getChoices());
         choiceRepository.save(choice);
         return true;
+    }
+
+    private void setParent(Choice parent, Set<Choice> choices) {
+        if(choices == null || choices.isEmpty()) return;
+
+        for(Choice choice: choices){
+            choice.setParent(parent);
+            setParent(choice, choice.getChoices());
+        }
     }
 
 

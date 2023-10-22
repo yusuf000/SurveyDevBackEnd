@@ -1,10 +1,7 @@
 package com.surveyking.questionservice.service;
 
 import com.surveyking.questionservice.model.QuestionRequest;
-import com.surveyking.questionservice.model.entity.Language;
-import com.surveyking.questionservice.model.entity.Project;
-import com.surveyking.questionservice.model.entity.Question;
-import com.surveyking.questionservice.model.entity.QuestionType;
+import com.surveyking.questionservice.model.entity.*;
 import com.surveyking.questionservice.repository.LanguageRepository;
 import com.surveyking.questionservice.repository.ProjectRepository;
 import com.surveyking.questionservice.repository.QuestionRepository;
@@ -12,9 +9,7 @@ import com.surveyking.questionservice.repository.QuestionTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +20,7 @@ public class QuestionService {
     private final ProjectRepository projectRepository;
     private final QuestionTypeRepository questionTypeRepository;
 
-    public boolean save(QuestionRequest request) {
+    public boolean add(QuestionRequest request) {
         Optional<Language> language = languageRepository.findLanguageByCode(
                 request.getLanguageCode()
         );
@@ -43,8 +38,27 @@ public class QuestionService {
                 .project(project.get())
                 .description(request.getDescription())
                 .build();
+        setQuestion(question, request.getChoices());
+        setParent(null, question.getChoices());
         questionRepository.save(question);
         return true;
+    }
+
+    private void setQuestion(Question question, List<Choice> choices) {
+        if(choices == null) return;
+        for(Choice choice: choices){
+            choice.setQuestion(question);
+        }
+        question.setChoices(new HashSet<>(choices));
+    }
+
+    private void setParent(Choice parent, Set<Choice> choices) {
+        if(choices == null || choices.isEmpty()) return;
+
+        for(Choice choice: choices){
+            choice.setParent(parent);
+            setParent(choice, choice.getChoices());
+        }
     }
 
     public List<Question> get(String sasCode) {

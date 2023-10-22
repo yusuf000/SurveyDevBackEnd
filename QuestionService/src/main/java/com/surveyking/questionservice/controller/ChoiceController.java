@@ -22,7 +22,7 @@ public class ChoiceController {
     }
 
 
-    @GetMapping("/delete")
+    @PostMapping("/delete")
     public ResponseEntity<Boolean> delete(@RequestParam("choiceId") Long choiceId){
         return ResponseEntity.ok(choiceService.delete(choiceId));
     }

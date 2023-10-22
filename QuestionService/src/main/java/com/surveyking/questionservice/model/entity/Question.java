@@ -40,6 +40,6 @@ public class Question {
     @Column(nullable = false, length = 1000)
     private String description;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "question")
     private Set<Choice> choices;
 }
