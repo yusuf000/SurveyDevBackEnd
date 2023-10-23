@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -42,4 +44,7 @@ public class Project {
 
     @Column(name = Constants.jobNumber, nullable = false, length = 20)
     private Long jobNumber;
+
+    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "project")
+    private Set<Question> questions;
 }

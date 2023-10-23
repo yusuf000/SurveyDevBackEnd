@@ -21,6 +21,11 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.save(project));
     }
 
+    @PostMapping("/delete")
+    public ResponseEntity<Boolean> delete(@RequestParam String sasCode){
+        return ResponseEntity.ok(projectService.delete(sasCode));
+    }
+
     @GetMapping("")
     public ResponseEntity<List<Project>> get(){
         return ResponseEntity.ok(projectService.get());

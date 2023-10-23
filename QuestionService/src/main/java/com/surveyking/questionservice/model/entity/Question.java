@@ -25,11 +25,9 @@ public class Question {
     private Long serial;
 
     @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Language language;
 
     @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private QuestionType questionType;
 
     @ManyToOne
@@ -40,6 +38,6 @@ public class Question {
     @Column(nullable = false, length = 1000)
     private String description;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "question")
+    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "question")
     private Set<Choice> choices;
 }

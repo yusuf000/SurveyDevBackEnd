@@ -2,6 +2,7 @@ package com.surveyking.questionservice.service;
 
 import com.surveyking.questionservice.model.entity.Project;
 import com.surveyking.questionservice.repository.ProjectRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,12 @@ public class ProjectService {
 
     public boolean save(Project project){
         projectRepository.save(project);
+        return true;
+    }
+
+    @Transactional
+    public boolean  delete(String sasCode) {
+        projectRepository.deleteBySasCode(sasCode);
         return true;
     }
 
