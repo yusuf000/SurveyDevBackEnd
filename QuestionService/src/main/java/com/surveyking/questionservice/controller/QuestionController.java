@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/question")
@@ -28,5 +29,10 @@ public class QuestionController {
     @GetMapping("")
     public ResponseEntity<List<Question>> get(@RequestParam("sasCode") String sasCode){
         return ResponseEntity.ok(questionService.get(sasCode));
+    }
+
+    @GetMapping(value = "", params = "questionId")
+    public ResponseEntity<Optional<Question>> get(@RequestParam("questionId") Long questionId){
+        return ResponseEntity.ok(questionService.get(questionId));
     }
 }

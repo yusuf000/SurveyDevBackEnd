@@ -73,4 +73,8 @@ public class QuestionService {
         questionRepository.deleteById(questionId);
         return true;
     }
+
+    public Optional<Question> get(Long questionId) {
+        return questionRepository.findById(questionId);
+    }
 }
