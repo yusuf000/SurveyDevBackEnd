@@ -21,6 +21,10 @@ public class ChoiceController {
         return ResponseEntity.ok(choiceService.add(request));
     }
 
+    @PostMapping("/add-all")
+    public ResponseEntity<Boolean> add(@RequestBody List<ChoiceRequest> requests){
+        return ResponseEntity.ok(choiceService.add(requests));
+    }
 
     @PostMapping("/delete")
     public ResponseEntity<Boolean> delete(@RequestParam("choiceId") Long choiceId){

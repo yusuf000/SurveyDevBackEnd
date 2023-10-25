@@ -14,7 +14,7 @@ import java.util.Optional;
 public class ProjectService {
     private final ProjectRepository projectRepository;
 
-    public boolean save(Project project){
+    public boolean add(Project project){
         projectRepository.save(project);
         return true;
     }

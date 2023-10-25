@@ -16,9 +16,9 @@ import java.util.Optional;
 public class ProjectController {
     private final ProjectService projectService;
 
-    @PostMapping("/save")
-    public ResponseEntity<Boolean> save(@RequestBody Project project){
-        return ResponseEntity.ok(projectService.save(project));
+    @PostMapping("/add")
+    public ResponseEntity<Boolean> add(@RequestBody Project project){
+        return ResponseEntity.ok(projectService.add(project));
     }
 
     @PostMapping("/delete")

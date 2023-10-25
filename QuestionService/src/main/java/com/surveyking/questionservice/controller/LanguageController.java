@@ -18,9 +18,9 @@ import java.util.List;
 public class LanguageController {
     private final LanguageService languageService;
 
-    @PostMapping("/save")
-    public ResponseEntity<Boolean> save(@RequestBody Language request){
-        return ResponseEntity.ok(languageService.save(request));
+    @PostMapping("/add")
+    public ResponseEntity<Boolean> add(@RequestBody Language request){
+        return ResponseEntity.ok(languageService.add(request));
     }
 
     @GetMapping("")

@@ -12,7 +12,7 @@ import java.util.List;
 public class QuestionTypeService {
     private final QuestionTypeRepository questionTypeRepository;
 
-    public boolean save(QuestionType questionType){
+    public boolean add(QuestionType questionType){
         questionTypeRepository.save(questionType);
         return true;
     }

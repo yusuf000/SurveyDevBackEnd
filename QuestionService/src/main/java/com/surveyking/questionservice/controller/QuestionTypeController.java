@@ -19,9 +19,9 @@ public class QuestionTypeController {
     private final QuestionTypeService questionTypeService;
 
 
-    @PostMapping("/save")
-    public ResponseEntity<Boolean> save(@RequestBody QuestionType questionType){
-        return ResponseEntity.ok(questionTypeService.save(questionType));
+    @PostMapping("/add")
+    public ResponseEntity<Boolean> add(@RequestBody QuestionType questionType){
+        return ResponseEntity.ok(questionTypeService.add(questionType));
     }
 
     @GetMapping("")

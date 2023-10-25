@@ -31,6 +31,27 @@ public class ChoiceService {
         return true;
     }
 
+
+    public Boolean add(List<ChoiceRequest> requests) {
+        if(requests == null || requests.isEmpty()) return true;
+        Optional<Question> question = questionRepository.findById(requests.get(0).getQuestionId());
+        if (question.isEmpty()) return false;
+
+        List<Choice> choices = new ArrayList<>();
+        for(ChoiceRequest request : requests){
+            Choice choice = Choice.builder()
+                    .serial(request.getSerial())
+                    .value(request.getValue())
+                    .question(question.get())
+                    .choices(new HashSet<>(request.getChoices()))
+                    .build();
+            setParent(choice, choice.getChoices());
+            choices.add(choice);
+        }
+        choiceRepository.saveAll(choices);
+        return true;
+    }
+
     private void setParent(Choice parent, Set<Choice> choices) {
         if(choices == null || choices.isEmpty()) return;
 
@@ -52,4 +73,5 @@ public class ChoiceService {
         if (question.isEmpty()) return Collections.emptyList();
         return choiceRepository.findAllByQuestion(question.get());
     }
+
 }

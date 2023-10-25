@@ -12,7 +12,7 @@ import java.util.List;
 public class LanguageService {
     private final LanguageRepository languageRepository;
 
-    public boolean save(Language request) {
+    public boolean add(Language request) {
         languageRepository.save(request);
         return true;
     }
