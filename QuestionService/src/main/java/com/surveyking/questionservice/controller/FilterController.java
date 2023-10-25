@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/filter")
@@ -17,5 +18,10 @@ public class FilterController {
     @PostMapping("/add")
     public ResponseEntity<Boolean> add(@RequestBody FilterRequest request){
         return ResponseEntity.ok(filterService.add(request));
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<Boolean> add(@RequestParam Long filterId){
+        return ResponseEntity.ok(filterService.delete(filterId));
     }
 }

@@ -24,4 +24,9 @@ public class FilterService {
         filterRepository.saveAll(request.getFilters());
         return true;
     }
+
+    public boolean delete(Long filterId) {
+        filterRepository.deleteById(filterId);
+        return true;
+    }
 }
