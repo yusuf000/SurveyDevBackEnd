@@ -22,6 +22,11 @@ public class QuestionController {
         return ResponseEntity.ok(questionService.add(request));
     }
 
+    @PostMapping("/add-all")
+    public ResponseEntity<Boolean> add(@RequestBody List<QuestionRequest> requests){
+        return ResponseEntity.ok(questionService.add(requests));
+    }
+
     @PostMapping("/delete")
     public ResponseEntity<Boolean> delete(@RequestParam("questionId") Long questionId){
         return ResponseEntity.ok(questionService.delete(questionId));

@@ -44,6 +44,37 @@ public class QuestionService {
         return true;
     }
 
+    public Boolean add(List<QuestionRequest> requests) {
+        if(requests == null || requests.isEmpty()) return true;
+
+        Optional<Language> language = languageRepository.findLanguageByCode(
+                requests.get(0).getLanguageCode()
+        );
+        Optional<Project> project = projectRepository.findProjectBySasCode(
+                requests.get(0).getProjectSasCode()
+        );
+        Optional<QuestionType> questionType = questionTypeRepository.findQuestionTypeByName(
+                requests.get(0).getQuestionType()
+        );
+        if (language.isEmpty() || project.isEmpty() || questionType.isEmpty()) return false;
+
+        List<Question> questions = new ArrayList<>();
+        for(QuestionRequest request: requests){
+            Question question = Question.builder()
+                    .serial(request.getSerial())
+                    .language(language.get())
+                    .questionType(questionType.get())
+                    .project(project.get())
+                    .description(request.getDescription())
+                    .build();
+            setQuestion(question, request.getChoices());
+            setParent(null, question.getChoices());
+            questions.add(question);
+        }
+        questionRepository.saveAll(questions);
+        return true;
+    }
+
     private void setQuestion(Question question, List<Choice> choices) {
         if(choices == null) return;
         for(Choice choice: choices){
