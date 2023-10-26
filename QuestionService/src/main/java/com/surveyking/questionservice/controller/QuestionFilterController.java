@@ -21,7 +21,7 @@ public class QuestionFilterController {
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<Boolean> add(@RequestParam Long filterId){
-        return ResponseEntity.ok(questionFilterService.delete(filterId));
+    public ResponseEntity<Boolean> add(@RequestParam Long questionId){
+        return ResponseEntity.ok(questionFilterService.delete(questionId));
     }
 }

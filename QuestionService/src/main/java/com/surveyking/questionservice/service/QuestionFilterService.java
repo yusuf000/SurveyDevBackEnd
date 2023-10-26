@@ -5,6 +5,7 @@ import com.surveyking.questionservice.model.entity.QuestionFilter;
 import com.surveyking.questionservice.model.entity.Question;
 import com.surveyking.questionservice.repository.QuestionFilterRepository;
 import com.surveyking.questionservice.repository.QuestionRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,15 +19,26 @@ public class QuestionFilterService {
     public boolean add(QuestionFilterRequest request) {
         Optional<Question> question = questionRepository.findById(request.getQuestionId());
         if(question.isEmpty()) return false;
-        for(QuestionFilter questionFilter : request.getQuestionFilters()){
-            questionFilter.setQuestion(question.get());
-        }
-        questionFilterRepository.saveAll(request.getQuestionFilters());
+        request.getQuestionFilter().setQuestion(question.get());
+        setParent(request.getQuestionFilter());
+        questionFilterRepository.save(request.getQuestionFilter());
         return true;
     }
 
-    public boolean delete(Long filterId) {
-        questionFilterRepository.deleteById(filterId);
+    private void setParent(QuestionFilter questionFilter) {
+        if(questionFilter.getQuestionFiltersToOr() == null) return;
+        for(QuestionFilter filter: questionFilter.getQuestionFiltersToOr()){
+            filter.setParent(questionFilter);
+            setParent(filter);
+        }
+    }
+
+
+    @Transactional
+    public boolean delete(Long questionId) {
+        Optional<Question> question = questionRepository.findById(questionId);
+        if(question.isEmpty()) return false;
+        questionFilterRepository.deleteByQuestion(question.get());
         return true;
     }
 }

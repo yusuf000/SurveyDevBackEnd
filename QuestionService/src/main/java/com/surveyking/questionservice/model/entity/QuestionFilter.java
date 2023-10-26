@@ -6,6 +6,8 @@ import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -23,11 +25,19 @@ public class QuestionFilter {
     private Question question;
 
     @Column(nullable = false)
-    private Long questionFilter;
+    private Long questionIdToFilter;
 
     @Column(nullable = false)
-    private Long choiceFilter;
+    private Long choiceIdToFilter;
+
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    private QuestionFilter parent;
 
     @OneToOne(cascade = CascadeType.ALL)
-    private QuestionFilter nextQuestionFilter;
+    private QuestionFilter questionFilterToAnd;
+
+    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "parent")
+    private Set<QuestionFilter> questionFiltersToOr;
 }
