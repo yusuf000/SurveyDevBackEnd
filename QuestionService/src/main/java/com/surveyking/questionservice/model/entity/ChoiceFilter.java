@@ -10,11 +10,11 @@ import java.util.Set;
 
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "choice")
-public class Choice {
+@Builder
+@Entity(name = "choice_filter")
+public class ChoiceFilter {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -22,22 +22,22 @@ public class Choice {
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private Question question;
+    private Choice choice;
 
     @Column(nullable = false)
-    private Long serial;
+    private Long questionIdToFilter;
 
     @Column(nullable = false)
-    private String value;
+    private Long choiceIdToFilter;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private Choice parent;
+    private ChoiceFilter parent;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private ChoiceFilter choiceFilterToAnd;
 
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "parent")
-    private Set<Choice> choices;
-
-    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "choice")
-    private Set<ChoiceFilter> choiceFilters;
+    private Set<ChoiceFilter> choiceFiltersToOr;
 }
