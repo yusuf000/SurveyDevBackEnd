@@ -11,8 +11,8 @@ import org.hibernate.annotations.OnDeleteAction;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity(name = "filter")
-public class Filter {
+@Entity(name = "question_filter")
+public class QuestionFilter {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -29,5 +29,5 @@ public class Filter {
     private Long choiceFilter;
 
     @OneToOne(cascade = CascadeType.ALL)
-    private Filter nextFilter;
+    private QuestionFilter nextQuestionFilter;
 }

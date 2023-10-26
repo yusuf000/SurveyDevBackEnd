@@ -1,6 +1,6 @@
 package com.surveyking.questionservice.model;
 
-import com.surveyking.questionservice.model.entity.Filter;
+import com.surveyking.questionservice.model.entity.QuestionFilter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FilterRequest {
+public class QuestionFilterRequest {
     Long questionId;
-    List<Filter> filters;
+    List<QuestionFilter> questionFilters;
 }

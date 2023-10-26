@@ -1,9 +1,9 @@
 package com.surveyking.questionservice.service;
 
-import com.surveyking.questionservice.model.FilterRequest;
-import com.surveyking.questionservice.model.entity.Filter;
+import com.surveyking.questionservice.model.QuestionFilterRequest;
+import com.surveyking.questionservice.model.entity.QuestionFilter;
 import com.surveyking.questionservice.model.entity.Question;
-import com.surveyking.questionservice.repository.FilterRepository;
+import com.surveyking.questionservice.repository.QuestionFilterRepository;
 import com.surveyking.questionservice.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,21 +12,21 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class FilterService {
-    private final FilterRepository filterRepository;
+public class QuestionFilterService {
+    private final QuestionFilterRepository questionFilterRepository;
     private final QuestionRepository questionRepository;
-    public boolean add(FilterRequest request) {
+    public boolean add(QuestionFilterRequest request) {
         Optional<Question> question = questionRepository.findById(request.getQuestionId());
         if(question.isEmpty()) return false;
-        for(Filter filter: request.getFilters()){
-            filter.setQuestion(question.get());
+        for(QuestionFilter questionFilter : request.getQuestionFilters()){
+            questionFilter.setQuestion(question.get());
         }
-        filterRepository.saveAll(request.getFilters());
+        questionFilterRepository.saveAll(request.getQuestionFilters());
         return true;
     }
 
     public boolean delete(Long filterId) {
-        filterRepository.deleteById(filterId);
+        questionFilterRepository.deleteById(filterId);
         return true;
     }
 }

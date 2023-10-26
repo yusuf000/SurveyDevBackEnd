@@ -42,5 +42,5 @@ public class Question {
     private Set<Choice> choices;
 
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "question")
-    private Set<Filter> filters;
+    private Set<QuestionFilter> questionFilters;
 }
