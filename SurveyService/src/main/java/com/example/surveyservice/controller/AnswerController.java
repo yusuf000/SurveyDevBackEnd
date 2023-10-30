@@ -21,8 +21,13 @@ public class AnswerController {
         return ResponseEntity.ok(answerService.submit(request));
     }
 
-    @GetMapping("")
+    @GetMapping(value = "", params = "questionId")
     public ResponseEntity<List<Answer> > getAll(@RequestParam Long questionId){
         return ResponseEntity.ok(answerService.getAll(questionId));
+    }
+
+    @GetMapping(value = "", params = "userId")
+    public ResponseEntity<List<Answer> > getAllForUser(@RequestParam Long userId){
+        return ResponseEntity.ok(answerService.getAllForUser(userId));
     }
 }

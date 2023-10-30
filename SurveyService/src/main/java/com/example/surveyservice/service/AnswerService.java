@@ -36,4 +36,8 @@ public class AnswerService {
     public List<Answer> getAll(Long questionId) {
         return answerRepository.findAllByIdQuestionId(questionId);
     }
+
+    public List<Answer> getAllForUser(Long userId) {
+        return answerRepository.findAllByIdUserId(userId);
+    }
 }
