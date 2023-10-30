@@ -12,7 +12,6 @@ import lombok.*;
 @NoArgsConstructor
 public class Answer {
     @EmbeddedId
-    @JsonIgnore
     private AnswerId id;
 
     private Long choiceId;

@@ -19,9 +19,7 @@ public class QuestionFilter {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
+    @OneToOne
     private Question question;
 
     @Column(nullable = false)

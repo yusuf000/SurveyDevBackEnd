@@ -1,5 +1,7 @@
 package com.surveyking.questionservice.service;
 
+import com.surveyking.questionservice.client.SurveyServiceClient;
+import com.surveyking.questionservice.model.Answer;
 import com.surveyking.questionservice.model.QuestionRequest;
 import com.surveyking.questionservice.model.entity.*;
 import com.surveyking.questionservice.repository.LanguageRepository;
@@ -19,6 +21,7 @@ public class QuestionService {
     private final LanguageRepository languageRepository;
     private final ProjectRepository projectRepository;
     private final QuestionTypeRepository questionTypeRepository;
+    private final SurveyServiceClient surveyServiceClient;
 
     public boolean add(QuestionRequest request) {
         Optional<Language> language = languageRepository.findLanguageByCode(
@@ -107,5 +110,43 @@ public class QuestionService {
 
     public Optional<Question> get(Long questionId) {
         return questionRepository.findById(questionId);
+    }
+
+    public Question getNext(Long userId, Long questionId) {
+        Optional<Question> currentQuestion = questionRepository.findById(questionId);
+        if(currentQuestion.isEmpty()) return null;
+        return findNextQuestion(userId, currentQuestion.get());
+    }
+
+    private Question findNextQuestion(Long userId, Question currentQuestion) {
+        Long nextSerial = currentQuestion.getSerial() + 1;
+        Optional<Question> nextQuestion = questionRepository.findBySerial(nextSerial);
+        if(nextQuestion.isEmpty()) return null;
+        List<Answer> answers = surveyServiceClient.getAllForUser(userId).getBody();
+        if(canShowNextQuestion(nextQuestion.get().getQuestionFilter(), answers)){
+            return nextQuestion.get();
+        }else{
+            return findNextQuestion(userId, nextQuestion.get());
+        }
+    }
+
+    private boolean canShowNextQuestion(QuestionFilter questionFilter, List<Answer> answers) {
+        if(questionFilter == null) return true;
+        boolean result = true;
+        for(Answer answer: answers){
+            if (
+                    answer.getChoiceId().longValue() == questionFilter.getChoiceIdToFilter().longValue()
+                            && answer.getAnswerId().getQuestionId().longValue() == questionFilter.getQuestionIdToFilter().longValue()
+            ) {
+                result = false;
+                break;
+            }
+        }
+        result &= canShowNextQuestion(questionFilter.getQuestionFilterToAnd(), answers);
+
+        for(QuestionFilter questionFilterOr: questionFilter.getQuestionFiltersToOr()){
+            result |= canShowNextQuestion(questionFilterOr, answers);
+        }
+        return result;
     }
 }

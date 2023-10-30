@@ -18,26 +18,35 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @PostMapping("/add")
-    public ResponseEntity<Boolean> add(@RequestBody QuestionRequest request){
+    public ResponseEntity<Boolean> add(@RequestBody QuestionRequest request) {
         return ResponseEntity.ok(questionService.add(request));
     }
 
     @PostMapping("/add-all")
-    public ResponseEntity<Boolean> add(@RequestBody List<QuestionRequest> requests){
+    public ResponseEntity<Boolean> add(@RequestBody List<QuestionRequest> requests) {
         return ResponseEntity.ok(questionService.add(requests));
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<Boolean> delete(@RequestParam("questionId") Long questionId){
+    public ResponseEntity<Boolean> delete(@RequestParam("questionId") Long questionId) {
         return ResponseEntity.ok(questionService.delete(questionId));
     }
+
     @GetMapping("")
-    public ResponseEntity<List<Question>> get(@RequestParam("sasCode") String sasCode){
+    public ResponseEntity<List<Question>> get(@RequestParam("sasCode") String sasCode) {
         return ResponseEntity.ok(questionService.get(sasCode));
     }
 
     @GetMapping(value = "", params = "questionId")
-    public ResponseEntity<Optional<Question>> get(@RequestParam("questionId") Long questionId){
+    public ResponseEntity<Optional<Question>> get(@RequestParam("questionId") Long questionId) {
         return ResponseEntity.ok(questionService.get(questionId));
+    }
+
+    @GetMapping(value = "/next")
+    public ResponseEntity<Question> getNext(
+            @RequestParam("userId") Long userId,
+            @RequestParam("questionId") Long questionId
+    ) {
+        return ResponseEntity.ok(questionService.getNext(userId, questionId));
     }
 }
