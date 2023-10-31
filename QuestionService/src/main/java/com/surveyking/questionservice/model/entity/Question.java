@@ -41,6 +41,6 @@ public class Question {
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "question")
     private Set<Choice> choices;
 
-    @OneToOne
+    @OneToOne(mappedBy = "question", cascade = CascadeType.REMOVE)
     private QuestionFilter questionFilter;
 }
