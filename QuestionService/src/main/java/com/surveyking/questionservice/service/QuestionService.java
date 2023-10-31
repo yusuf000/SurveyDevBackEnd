@@ -115,37 +115,37 @@ public class QuestionService {
     public Question getNext(Long userId, Long questionId) {
         Optional<Question> currentQuestion = questionRepository.findById(questionId);
         if(currentQuestion.isEmpty()) return null;
-        return findNextQuestion(userId, currentQuestion.get());
+        List<Answer> answers = surveyServiceClient.getAllForUser(userId).getBody();
+        return findNextQuestion(currentQuestion.get(), answers);
     }
 
-    private Question findNextQuestion(Long userId, Question currentQuestion) {
+    private Question findNextQuestion(Question currentQuestion, List<Answer> answers) {
         Long nextSerial = currentQuestion.getSerial() + 1;
         Optional<Question> nextQuestion = questionRepository.findBySerial(nextSerial);
         if(nextQuestion.isEmpty()) return null;
-        List<Answer> answers = surveyServiceClient.getAllForUser(userId).getBody();
-        if(canShowNextQuestion(nextQuestion.get().getQuestionFilter(), answers)){
+        if(!skipQuestion(nextQuestion.get().getQuestionFilter(), answers)){
             return nextQuestion.get();
         }else{
-            return findNextQuestion(userId, nextQuestion.get());
+            return findNextQuestion(nextQuestion.get(), answers);
         }
     }
 
-    private boolean canShowNextQuestion(QuestionFilter questionFilter, List<Answer> answers) {
+    private boolean skipQuestion(QuestionFilter questionFilter, List<Answer> answers) {
         if(questionFilter == null) return true;
-        boolean result = true;
+        boolean result = false;
         for(Answer answer: answers){
             if (
                     answer.getChoiceId().longValue() == questionFilter.getChoiceIdToFilter().longValue()
-                            && answer.getAnswerId().getQuestionId().longValue() == questionFilter.getQuestionIdToFilter().longValue()
+                            && answer.getId().getQuestionId().longValue() == questionFilter.getQuestionIdToFilter().longValue()
             ) {
-                result = false;
+                result = true;
                 break;
             }
         }
-        result &= canShowNextQuestion(questionFilter.getQuestionFilterToAnd(), answers);
+        result &= skipQuestion(questionFilter.getQuestionFilterToAnd(), answers);
 
         for(QuestionFilter questionFilterOr: questionFilter.getQuestionFiltersToOr()){
-            result |= canShowNextQuestion(questionFilterOr, answers);
+            result |= skipQuestion(questionFilterOr, answers);
         }
         return result;
     }
