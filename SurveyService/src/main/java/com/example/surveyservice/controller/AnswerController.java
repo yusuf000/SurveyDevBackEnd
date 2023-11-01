@@ -26,8 +26,8 @@ public class AnswerController {
         return ResponseEntity.ok(answerService.getAll(questionId));
     }
 
-    @GetMapping(value = "", params = "userId")
-    public ResponseEntity<List<Answer> > getAllForUser(@RequestParam Long userId){
+    @GetMapping(value = "")
+    public ResponseEntity<List<Answer> > getAllForUser(@RequestHeader(value = "userId") String userId){
         return ResponseEntity.ok(answerService.getAllForUser(userId));
     }
 }

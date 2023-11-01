@@ -14,6 +14,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AnswerId implements Serializable {
-    private Long userId;
+    private String userId;
     private Long questionId;
 }
