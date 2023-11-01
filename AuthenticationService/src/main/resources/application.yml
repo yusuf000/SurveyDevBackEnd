@@ -1,11 +1,11 @@
 Spring:
-  main:
-    web-application-type: reactive
   datasource:
     url: jdbc:mysql://localhost:3306/jwt_security
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
+  application:
+    name: AUTHENTICATION-SERVICE
   jpa:
     hibernate:
       ddl-auto: update
@@ -15,10 +15,8 @@ Spring:
         format_sql: true
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
-  application:
-    name: API-GATEWAY
 server:
-  port: 8080
+  port: 9090
 eureka:
   client:
     serviceUrl:
