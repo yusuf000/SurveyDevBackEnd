@@ -1,6 +1,5 @@
 package com.surveyking.apigateway.config;
 
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -28,13 +27,14 @@ public class AuthenticationFilter implements GatewayFilter {
                 return this.onError(exchange, HttpStatus.UNAUTHORIZED);
             }
 
-            final String token = this.getAuthHeader(request);
+            final String authHeader = getAuthHeader(request);
+            final String jwt = authHeader.substring(7);
 
-            if (jwtUtil.isInvalid(token)) {
+            if (jwtUtil.isInvalid(jwt)) {
                 return this.onError(exchange, HttpStatus.FORBIDDEN);
             }
 
-            this.updateRequest(exchange, token);
+            this.updateRequest(exchange, jwt);
         }
         return chain.filter(exchange);
     }
@@ -54,9 +54,8 @@ public class AuthenticationFilter implements GatewayFilter {
     }
 
     private void updateRequest(ServerWebExchange exchange, String token) {
-        Claims claims = jwtUtil.getAllClaimsFromToken(token);
         exchange.getRequest().mutate()
-                .header("userId", String.valueOf(claims.getSubject()))
+                .header("userId", String.valueOf(jwtUtil.extractUserName(token)))
                 .build();
     }
 }

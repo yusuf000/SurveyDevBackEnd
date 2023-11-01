@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.function.Function;
 
 @Component
 @RequiredArgsConstructor
@@ -23,17 +24,34 @@ public class JwtUtil {
     public void init(){
         this.key = getSignInKey();
     }
+    public String extractUserName(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
 
-    public Claims getAllClaimsFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    private Date extractExpirationDate(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     private boolean isTokenExpired(String token) {
-        return this.getAllClaimsFromToken(token).getExpiration().before(new Date());
+        Date expirationDate = extractExpirationDate(token);
+        return expirationDate.before(new Date());
     }
 
     public boolean isInvalid(String token) {
-        return this.isTokenExpired(token);
+        return isTokenExpired(token);
     }
 
     private Key getSignInKey() {
