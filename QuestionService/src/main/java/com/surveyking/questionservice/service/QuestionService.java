@@ -112,7 +112,7 @@ public class QuestionService {
         return questionRepository.findById(questionId);
     }
 
-    public Question getNext(Long userId, Long questionId) {
+    public Question getNext(String userId, Long questionId) {
         Optional<Question> currentQuestion = questionRepository.findById(questionId);
         if(currentQuestion.isEmpty()) return null;
         List<Answer> answers = surveyServiceClient.getAllForUser(userId).getBody();

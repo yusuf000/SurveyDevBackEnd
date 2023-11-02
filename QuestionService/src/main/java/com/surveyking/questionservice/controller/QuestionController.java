@@ -44,7 +44,7 @@ public class QuestionController {
 
     @GetMapping(value = "/next")
     public ResponseEntity<Question> getNext(
-            @RequestParam("userId") Long userId,
+            @RequestHeader("userId") String userId,
             @RequestParam("questionId") Long questionId
     ) {
         return ResponseEntity.ok(questionService.getNext(userId, questionId));
