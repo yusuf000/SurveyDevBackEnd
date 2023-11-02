@@ -34,7 +34,10 @@ public class JwtUtil {
 
     public String extractUserAuthorities(String token) {
         final Claims claims = extractAllClaims(token);
-        return claims.get("authorities").toString();
+        StringBuilder authsBuilder = new StringBuilder(claims.get("authorities").toString());
+        authsBuilder.deleteCharAt(0);
+        authsBuilder.deleteCharAt(authsBuilder.length() - 1);
+        return authsBuilder.toString();
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
