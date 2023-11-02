@@ -1,15 +1,17 @@
 package com.example.authenticationservice.authentication.service;
 
-import com.example.authenticationservice.authentication.model.AuthenticationRequest;
-import com.example.authenticationservice.authentication.model.AuthenticationResponse;
-import com.example.authenticationservice.authentication.model.RegisterRequest;
-import com.example.authenticationservice.authentication.model.User;
+import com.example.authenticationservice.authentication.model.*;
 import com.example.authenticationservice.authentication.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,7 +50,10 @@ public class AuthenticationService {
         if (!user.getIsActive()) {
             throw new Exception("User not approved by admin");
         } else {
-            var jwtToken = jwtService.generateToken(user);
+            List<String> authorities = user.getRoles().stream().flatMap(role -> role.getPrivileges().stream().map(Privilege::getName)).collect(Collectors.toList());
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("authorities", authorities);
+            var jwtToken = jwtService.generateToken(claims, user);
             return AuthenticationResponse.builder()
                     .token(jwtToken)
                     .build();
