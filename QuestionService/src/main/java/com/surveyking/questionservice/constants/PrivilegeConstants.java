@@ -1,4 +1,4 @@
-package com.example.authenticationservice.authentication.constants;
+package com.surveyking.questionservice.constants;
 
 import org.springframework.stereotype.Component;
 

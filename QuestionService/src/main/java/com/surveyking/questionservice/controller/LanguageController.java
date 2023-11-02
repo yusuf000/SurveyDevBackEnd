@@ -20,12 +20,13 @@ public class LanguageController {
     private final LanguageService languageService;
 
     @PostMapping("/add")
+    @PreAuthorize("hasAuthority(@Privilege.LANGUAGE_CREATE)")
     public ResponseEntity<Boolean> add(@RequestBody Language request){
         return ResponseEntity.ok(languageService.add(request));
     }
 
     @GetMapping("")
-    @PreAuthorize("hasAuthority('Interviewer Delete')")
+    @PreAuthorize("hasAuthority(@Privilege.LANGUAGE_INFO)")
     public ResponseEntity<List<Language>> get(){
         return ResponseEntity.ok(languageService.get());
     }

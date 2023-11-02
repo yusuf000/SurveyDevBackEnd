@@ -41,21 +41,16 @@ public class DataLoader implements CommandLineRunner {
                 Privilege.builder().name(PROJECT_CREATE).build(),
                 Privilege.builder().name(PROJECT_DELETE).build(),
                 Privilege.builder().name(PROJECT_UPDATE).build(),
-                Privilege.builder().name(UPLOAD_SCRIPT).build(),
-                Privilege.builder().name(CHECK_SCRIPT).build(),
-                Privilege.builder().name(INTERVIEWER_ASSIGNMENT).build(),
-                Privilege.builder().name(INTERVIEWER_INFO).build(),
-                Privilege.builder().name(INTERVIEWER_CREATE).build(),
-                Privilege.builder().name(INTERVIEWER_DELETE).build(),
-                Privilege.builder().name(INTERVIEWER_UPDATE).build(),
-                Privilege.builder().name(FIELD_STATUS).build(),
-                Privilege.builder().name(DASHBOARD).build(),
-                Privilege.builder().name(DATA_BY_RESPONDENT).build(),
-                Privilege.builder().name(QUALITY_CONTROL).build(),
-                Privilege.builder().name(QC_REPORT).build(),
-                Privilege.builder().name(COMMERCIAL_REPORT).build(),
-                Privilege.builder().name(DATA_DOWNLOAD).build(),
-                Privilege.builder().name(TELEPHONIC_INTERVIEW).build()
+                Privilege.builder().name(LANGUAGE_CREATE).build(),
+                Privilege.builder().name(LANGUAGE_INFO).build(),
+                Privilege.builder().name(CHOICE_CREATE).build(),
+                Privilege.builder().name(CHOICE_DELETE).build(),
+                Privilege.builder().name(CHOICE_INFO).build(),
+                Privilege.builder().name(QUESTION_CREATE).build(),
+                Privilege.builder().name(QUESTION_DELETE).build(),
+                Privilege.builder().name(QUESTION_INFO).build(),
+                Privilege.builder().name(QUESTION_TYPE_CREATE).build(),
+                Privilege.builder().name(QUESTION_TYPE_INFO).build()
         );
     }
 
