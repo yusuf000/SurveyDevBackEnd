@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/project")
+@RequestMapping("/api/v1/project")
 @RequiredArgsConstructor
 public class ProjectController {
     private final ProjectService projectService;

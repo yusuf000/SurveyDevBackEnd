@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 @Controller
-@RequestMapping("/question-type")
+@RequestMapping("/api/v1/question-type")
 @RequiredArgsConstructor
 public class QuestionTypeController {
     private final QuestionTypeService questionTypeService;

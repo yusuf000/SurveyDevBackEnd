@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/choice")
+@RequestMapping("/api/v1/choice")
 @RequiredArgsConstructor
 public class ChoiceController {
     private final ChoiceService choiceService;

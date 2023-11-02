@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/choice-filter")
+@RequestMapping("/api/v1/choice-filter")
 @RequiredArgsConstructor
 public class ChoiceFilterController {
     private final ChoiceFilterService choiceFilterService;

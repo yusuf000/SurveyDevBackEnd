@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/question-filter")
+@RequestMapping("/api/v1/question-filter")
 @RequiredArgsConstructor
 public class QuestionFilterController {
     private final QuestionFilterService questionFilterService;
