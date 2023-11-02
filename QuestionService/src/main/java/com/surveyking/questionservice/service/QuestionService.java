@@ -115,17 +115,25 @@ public class QuestionService {
     public Question getNext(String userId, Long questionId) {
         Optional<Question> currentQuestion = questionRepository.findById(questionId);
         if(currentQuestion.isEmpty()) return null;
+
+        Long nextSerial = currentQuestion.get().getSerial() + 1;
+        Optional<Question> nextQuestion = questionRepository.findBySerial(nextSerial);
+        if(nextQuestion.isEmpty()) return null;
+        if(nextQuestion.get().getQuestionFilter() == null) return nextQuestion.get();
+
         List<Answer> answers = surveyServiceClient.getAllForUser(userId).getBody();
-        return findNextQuestion(currentQuestion.get(), answers);
+        return findNextQuestion(nextQuestion.get(), answers);
     }
 
     private Question findNextQuestion(Question currentQuestion, List<Answer> answers) {
-        Long nextSerial = currentQuestion.getSerial() + 1;
-        Optional<Question> nextQuestion = questionRepository.findBySerial(nextSerial);
-        if(nextQuestion.isEmpty()) return null;
-        if(!skipQuestion(nextQuestion.get().getQuestionFilter(), answers)){
-            return nextQuestion.get();
+        if(!skipQuestion(currentQuestion.getQuestionFilter(), answers)){
+            return currentQuestion;
         }else{
+            Long nextSerial = currentQuestion.getSerial() + 1;
+            Optional<Question> nextQuestion = questionRepository.findBySerial(nextSerial);
+            if(nextQuestion.isEmpty()) return null;
+            if(nextQuestion.get().getQuestionFilter() == null) return nextQuestion.get();
+
             return findNextQuestion(nextQuestion.get(), answers);
         }
     }
