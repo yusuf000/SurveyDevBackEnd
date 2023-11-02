@@ -21,9 +21,10 @@ public class JwtUtil {
     private Key key;
 
     @PostConstruct
-    public void init(){
+    public void init() {
         this.key = getSignInKey();
     }
+
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -34,6 +35,7 @@ public class JwtUtil {
 
     public String extractUserAuthorities(String token) {
         final Claims claims = extractAllClaims(token);
+        if (claims.get("authorities") == null) return "";
         StringBuilder authsBuilder = new StringBuilder(claims.get("authorities").toString());
         authsBuilder.deleteCharAt(0);
         authsBuilder.deleteCharAt(authsBuilder.length() - 1);

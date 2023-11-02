@@ -50,7 +50,8 @@ public class DataLoader implements CommandLineRunner {
                 Privilege.builder().name(QUESTION_DELETE).build(),
                 Privilege.builder().name(QUESTION_INFO).build(),
                 Privilege.builder().name(QUESTION_TYPE_CREATE).build(),
-                Privilege.builder().name(QUESTION_TYPE_INFO).build()
+                Privilege.builder().name(QUESTION_TYPE_INFO).build(),
+                Privilege.builder().name(ANSWER_INFO).build()
         );
     }
 

@@ -11,5 +11,6 @@ import java.util.List;
 @FeignClient(name = "SURVEY-SERVICE")
 public interface SurveyServiceClient {
     @GetMapping(value = "/api/v1/answer")
-    ResponseEntity<List<Answer> > getAllForUser(@RequestHeader(value = "userId") String userId);
+    ResponseEntity<List<Answer> > getAllForUser(@RequestHeader(value = "userId") String userId,
+                                                @RequestHeader(value = "authorities") String authority);
 }

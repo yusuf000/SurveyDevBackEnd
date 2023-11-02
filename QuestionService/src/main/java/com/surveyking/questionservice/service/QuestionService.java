@@ -1,6 +1,7 @@
 package com.surveyking.questionservice.service;
 
 import com.surveyking.questionservice.client.SurveyServiceClient;
+import com.surveyking.questionservice.constants.PrivilegeConstants;
 import com.surveyking.questionservice.model.Answer;
 import com.surveyking.questionservice.model.QuestionRequest;
 import com.surveyking.questionservice.model.entity.*;
@@ -121,7 +122,7 @@ public class QuestionService {
         if(nextQuestion.isEmpty()) return null;
         if(nextQuestion.get().getQuestionFilter() == null) return nextQuestion.get();
 
-        List<Answer> answers = surveyServiceClient.getAllForUser(userId).getBody();
+        List<Answer> answers = surveyServiceClient.getAllForUser(userId, PrivilegeConstants.ANSWER_INFO).getBody();
         return findNextQuestion(nextQuestion.get(), answers);
     }
 
