@@ -131,7 +131,7 @@ public class QuestionService {
     }
 
     private boolean skipQuestion(QuestionFilter questionFilter, List<Answer> answers) {
-        if(questionFilter == null) return true;
+        if(questionFilter == null) return false;
         boolean result = false;
         for(Answer answer: answers){
             if (
@@ -142,7 +142,7 @@ public class QuestionService {
                 break;
             }
         }
-        result &= skipQuestion(questionFilter.getQuestionFilterToAnd(), answers);
+        if(questionFilter.getQuestionFilterToAnd() != null) result &= skipQuestion(questionFilter.getQuestionFilterToAnd(), answers);
 
         for(QuestionFilter questionFilterOr: questionFilter.getQuestionFiltersToOr()){
             result |= skipQuestion(questionFilterOr, answers);

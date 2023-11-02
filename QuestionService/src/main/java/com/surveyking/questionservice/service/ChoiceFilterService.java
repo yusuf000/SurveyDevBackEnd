@@ -19,7 +19,7 @@ public class ChoiceFilterService {
     private final ChoiceRepository choiceRepository;
     public boolean add(ChoiceFilterRequest request) {
         Optional<Choice> choice = choiceRepository.findById(request.getChoiceId());
-        if(choice.isEmpty()) return false;
+        if(choice.isEmpty() || choice.get().getChoiceFilters() != null) return false;
         request.getChoiceFilter().setChoice(choice.get());
         setParent(request.getChoiceFilter());
         choiceFilterRepository.save(request.getChoiceFilter());

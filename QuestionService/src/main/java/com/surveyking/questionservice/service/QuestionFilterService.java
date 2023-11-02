@@ -18,7 +18,7 @@ public class QuestionFilterService {
     private final QuestionRepository questionRepository;
     public boolean add(QuestionFilterRequest request) {
         Optional<Question> question = questionRepository.findById(request.getQuestionId());
-        if(question.isEmpty()) return false;
+        if(question.isEmpty() || question.get().getQuestionFilter() != null) return false;
         request.getQuestionFilter().setQuestion(question.get());
         setParent(request.getQuestionFilter());
         questionFilterRepository.save(request.getQuestionFilter());

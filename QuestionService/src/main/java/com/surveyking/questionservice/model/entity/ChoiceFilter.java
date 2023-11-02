@@ -19,8 +19,7 @@ public class ChoiceFilter {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToOne
     @JsonIgnore
     private Choice choice;
 

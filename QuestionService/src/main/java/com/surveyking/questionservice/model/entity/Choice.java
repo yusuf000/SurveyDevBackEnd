@@ -38,6 +38,7 @@ public class Choice {
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "parent")
     private Set<Choice> choices;
 
-    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "choice")
-    private Set<ChoiceFilter> choiceFilters;
+    @OneToOne(mappedBy = "choice", cascade = CascadeType.REMOVE)
+    @JsonIgnore
+    private ChoiceFilter choiceFilters;
 }
