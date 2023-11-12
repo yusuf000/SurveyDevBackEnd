@@ -17,6 +17,16 @@ Spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
   application:
     name: API-GATEWAY
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
 server:
   port: 8080
 eureka:
