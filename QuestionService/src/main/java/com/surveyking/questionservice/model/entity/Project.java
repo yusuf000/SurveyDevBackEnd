@@ -30,6 +30,9 @@ public class Project {
     @Column(name = Constants.clientName, nullable = false, length = 50)
     private String clientName;
 
+    @Column(name = Constants.owner, nullable = false, length = 50)
+    private String owner;
+
     @Column(name = Constants.startDate, nullable = false, length = 50)
     private String startDate;
 

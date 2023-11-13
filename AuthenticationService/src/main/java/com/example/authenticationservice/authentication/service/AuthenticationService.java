@@ -1,6 +1,7 @@
 package com.example.authenticationservice.authentication.service;
 
 import com.example.authenticationservice.authentication.model.*;
+import com.example.authenticationservice.authentication.repository.RoleRepository;
 import com.example.authenticationservice.authentication.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,12 +12,16 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.example.authenticationservice.authentication.constants.RoleConstants.SUPER_ADMIN;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
-    private final UserRepository repository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -26,12 +31,12 @@ public class AuthenticationService {
                 .name(request.getName())
                 .userId(request.getUserId())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .roles(null)
+                .roles(Set.of(roleRepository.findByName(SUPER_ADMIN)))
                 .build();
-        if (repository.findByUserId(user.getUserId()).isPresent()) {
+        if (userRepository.findByUserId(user.getUserId()).isPresent()) {
             return false;
         } else {
-            repository.save(user);
+            userRepository.save(user);
             return true;
         }
 
@@ -44,7 +49,7 @@ public class AuthenticationService {
                         request.getPassword()
                 )
         );
-        var user = repository.findByUserId(request.getUserId())
+        var user = userRepository.findByUserId(request.getUserId())
                 .orElseThrow(() -> new Exception("User not registered"));
 
         List<String> authorities = user.getRoles().stream().flatMap(role -> role.getPrivileges().stream().map(Privilege::getName)).collect(Collectors.toList());

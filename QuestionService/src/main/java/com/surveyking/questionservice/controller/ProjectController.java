@@ -3,6 +3,7 @@ package com.surveyking.questionservice.controller;
 import com.surveyking.questionservice.model.entity.Project;
 import com.surveyking.questionservice.service.ProjectService;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -19,7 +20,8 @@ public class ProjectController {
 
     @PostMapping("/add")
     @PreAuthorize("hasAuthority(@Privilege.PROJECT_CREATE)")
-    public ResponseEntity<Boolean> add(@RequestBody Project project){
+    public ResponseEntity<Boolean> add(@RequestBody Project project, @RequestHeader(value = "userId") String userId){
+      //  project.setOwner(authentication.name());
         return ResponseEntity.ok(projectService.add(project));
     }
 
