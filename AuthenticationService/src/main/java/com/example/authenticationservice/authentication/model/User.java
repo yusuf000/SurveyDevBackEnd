@@ -22,10 +22,10 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
     @Column(nullable = false, unique = true)
-    private String email;
+    private String userId;
     @Column(nullable = false)
     private String password;
     @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
@@ -38,7 +38,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return userId;
     }
 
     @Override

@@ -66,7 +66,7 @@ public class DataLoader implements CommandLineRunner {
     private void createUserAdmin() {
         User userAdmin = User.builder()
                 .name("admin")
-                .email("admin@gmail.com")
+                .userId("admin@gmail.com")
                 .password(passwordEncoder.encode("admin"))
                 .roles(Set.of(roleRepository.findByName(SUPER_ADMIN)))
                 .build();

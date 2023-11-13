@@ -33,9 +33,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (isTokenAvailable(authHeader)) {
             final String jwt = authHeader.substring(7);
-            final String userEmail = jwtService.extractUserName(jwt);
-            if (!isUserAuthenticated(userEmail)) {
-                UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+            final String userId = jwtService.extractUserId(jwt);
+            if (!isUserAuthenticated(userId)) {
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(userId);
                 if (jwtService.isTokenValid(jwt, userDetails)) {
                     authenticateUser(request, userDetails);
                 }
@@ -56,8 +56,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
-    private boolean isUserAuthenticated(String userEmail) {
-        return userEmail != null && SecurityContextHolder.getContext().getAuthentication() != null;
+    private boolean isUserAuthenticated(String userId) {
+        return userId != null && SecurityContextHolder.getContext().getAuthentication() != null;
     }
 
     private boolean isTokenAvailable(String authHeader) {

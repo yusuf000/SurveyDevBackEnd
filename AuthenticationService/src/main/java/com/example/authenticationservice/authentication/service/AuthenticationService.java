@@ -24,11 +24,11 @@ public class AuthenticationService {
     public boolean register(RegisterRequest request) {
         var user = User.builder()
                 .name(request.getName())
-                .email(request.getEmail())
+                .userId(request.getUserId())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(null)
                 .build();
-        if (repository.findByEmail(user.getEmail()).isPresent()) {
+        if (repository.findByUserId(user.getUserId()).isPresent()) {
             return false;
         } else {
             repository.save(user);
@@ -40,11 +40,11 @@ public class AuthenticationService {
     public AuthenticationResponse authenticate(AuthenticationRequest request) throws Exception {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
+                        request.getUserId(),
                         request.getPassword()
                 )
         );
-        var user = repository.findByEmail(request.getEmail())
+        var user = repository.findByUserId(request.getUserId())
                 .orElseThrow(() -> new Exception("User not registered"));
 
         List<String> authorities = user.getRoles().stream().flatMap(role -> role.getPrivileges().stream().map(Privilege::getName)).collect(Collectors.toList());

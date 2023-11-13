@@ -20,7 +20,7 @@ import java.util.function.Function;
 public class JwtService {
     private final SecretKeyService secretKeyService;
 
-    public String extractUserName(String token) {
+    public String extractUserId(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -65,7 +65,7 @@ public class JwtService {
     }
 
     private boolean isUserSame(String token, UserDetails userDetails) {
-        String userName = extractUserName(token);
+        String userName = extractUserId(token);
         return userName.equals(userDetails.getUsername());
     }
 
