@@ -27,7 +27,6 @@ public class AuthenticationService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(null)
-                .isActive(false)
                 .build();
         if (repository.findByEmail(user.getEmail()).isPresent()) {
             return false;
@@ -47,16 +46,14 @@ public class AuthenticationService {
         );
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new Exception("User not registered"));
-        if (!user.getIsActive()) {
-            throw new Exception("User not approved by admin");
-        } else {
-            List<String> authorities = user.getRoles().stream().flatMap(role -> role.getPrivileges().stream().map(Privilege::getName)).collect(Collectors.toList());
-            Map<String, Object> claims = new HashMap<>();
-            claims.put("authorities", authorities);
-            var jwtToken = jwtService.generateToken(claims, user);
-            return AuthenticationResponse.builder()
-                    .token(jwtToken)
-                    .build();
-        }
+
+        List<String> authorities = user.getRoles().stream().flatMap(role -> role.getPrivileges().stream().map(Privilege::getName)).collect(Collectors.toList());
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("authorities", authorities);
+        var jwtToken = jwtService.generateToken(claims, user);
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build();
+
     }
 }

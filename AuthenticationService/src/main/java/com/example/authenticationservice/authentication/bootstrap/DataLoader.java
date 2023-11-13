@@ -68,7 +68,6 @@ public class DataLoader implements CommandLineRunner {
                 .name("admin")
                 .email("admin@gmail.com")
                 .password(passwordEncoder.encode("admin"))
-                .isActive(true)
                 .roles(Set.of(roleRepository.findByName(SUPER_ADMIN)))
                 .build();
         userRepository.save(userAdmin);
