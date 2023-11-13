@@ -1,8 +1,11 @@
 package com.surveyking.questionservice.config;
 
+import com.surveyking.questionservice.model.ChoiceRequest;
 import com.surveyking.questionservice.model.QuestionRequest;
+import com.surveyking.questionservice.model.entity.Choice;
 import com.surveyking.questionservice.model.entity.Project;
 import com.surveyking.questionservice.model.entity.Question;
+import com.surveyking.questionservice.repository.ChoiceRepository;
 import com.surveyking.questionservice.repository.ProjectRepository;
 import com.surveyking.questionservice.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +19,7 @@ import java.util.Optional;
 public class OwnershipCheck {
     private final ProjectRepository projectRepository;
     private final QuestionRepository questionRepository;
+    private final ChoiceRepository choiceRepository;
 
     public boolean checkProjectOwner(String sasCode, String userId){
         Optional<Project> project = projectRepository.findProjectBySasCode(sasCode);
@@ -55,6 +59,23 @@ public class OwnershipCheck {
         if(question.isEmpty()) return false;
         else{
             return question.get().getProject().getMembers().contains(userId);
+        }
+    }
+
+    public boolean checkProjectMembershipFromChoiceRequests(List<ChoiceRequest> requests, String userId) {
+        for(ChoiceRequest request: requests){
+            if(!checkProjectMembershipFromQuestionId(request.getQuestionId(), userId)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean checkProjectMembershipFromChoiceId(Long choiceId, String userId) {
+        Optional<Choice> choice = choiceRepository.findById(choiceId);
+        if(choice.isEmpty()) return false;
+        else{
+            return choice.get().getQuestion().getProject().getMembers().contains(userId);
         }
     }
 }
