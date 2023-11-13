@@ -25,7 +25,7 @@ public class JwtUtil {
         this.key = getSignInKey();
     }
 
-    public String extractUserName(String token) {
+    public String extractUserId(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
