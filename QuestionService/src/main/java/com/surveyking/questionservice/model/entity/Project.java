@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -50,4 +51,7 @@ public class Project {
 
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "project")
     private Set<Question> questions;
+
+    @ElementCollection(targetClass = String.class)
+    private List<String> members;
 }

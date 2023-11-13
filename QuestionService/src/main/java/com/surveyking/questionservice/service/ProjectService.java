@@ -16,6 +16,7 @@ public class ProjectService {
 
     public boolean add(Project project, String userId){
         project.setOwner(userId);
+        project.setMembers(List.of(userId));
         projectRepository.save(project);
         return true;
     }
@@ -32,5 +33,15 @@ public class ProjectService {
 
     public Optional<Project> get(String sasCode){
         return projectRepository.findProjectBySasCode(sasCode);
+    }
+
+    public Boolean addMember(String sasCode, String memberId) {
+        Optional<Project> project = projectRepository.findProjectBySasCode(sasCode);
+        if(project.isEmpty()) return false;
+        else{
+            project.get().getMembers().add(memberId);
+            projectRepository.save(project.get());
+            return true;
+        }
     }
 }

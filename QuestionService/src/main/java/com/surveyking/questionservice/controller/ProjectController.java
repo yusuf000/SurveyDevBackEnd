@@ -40,4 +40,13 @@ public class ProjectController {
     public ResponseEntity<Optional<Project>> get(@RequestParam("sasCode") String sasCode, @RequestHeader(value = "userId") String userId){
         return ResponseEntity.ok(projectService.get(sasCode));
     }
+
+    @PostMapping("/add-member")
+    @PreAuthorize("hasAuthority(@Privilege.PROJECT_UPDATE)" + "&& @ownershipCheck.checkProjectOwner(#sasCode, #userId)")
+    public ResponseEntity<Boolean> addMember(
+            @RequestParam("sasCode") String sasCode,
+            @RequestParam("memberId") String memberId,
+            @RequestHeader(value = "userId") String userId){
+        return ResponseEntity.ok(projectService.addMember(sasCode, memberId));
+    }
 }
