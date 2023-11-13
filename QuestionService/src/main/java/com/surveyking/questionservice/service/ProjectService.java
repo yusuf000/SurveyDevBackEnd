@@ -14,7 +14,8 @@ import java.util.Optional;
 public class ProjectService {
     private final ProjectRepository projectRepository;
 
-    public boolean add(Project project){
+    public boolean add(Project project, String userId){
+        project.setOwner(userId);
         projectRepository.save(project);
         return true;
     }
@@ -25,8 +26,8 @@ public class ProjectService {
         return true;
     }
 
-    public List<Project> get(){
-        return projectRepository.findAll();
+    public Optional<List<Project>> getAll(String userId){
+        return projectRepository.findProjectByOwner(userId);
     }
 
     public Optional<Project> get(String sasCode){

@@ -3,7 +3,6 @@ package com.surveyking.questionservice.controller;
 import com.surveyking.questionservice.model.entity.Project;
 import com.surveyking.questionservice.service.ProjectService;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -21,25 +20,24 @@ public class ProjectController {
     @PostMapping("/add")
     @PreAuthorize("hasAuthority(@Privilege.PROJECT_CREATE)")
     public ResponseEntity<Boolean> add(@RequestBody Project project, @RequestHeader(value = "userId") String userId){
-      //  project.setOwner(authentication.name());
-        return ResponseEntity.ok(projectService.add(project));
+        return ResponseEntity.ok(projectService.add(project,userId));
     }
 
     @PostMapping("/delete")
-    @PreAuthorize("hasAuthority(@Privilege.PROJECT_DELETE)")
-    public ResponseEntity<Boolean> delete(@RequestParam String sasCode){
+    @PreAuthorize("hasAuthority(@Privilege.PROJECT_DELETE)" + "&& @ownershipCheck.checkProjectOwner(#sasCode, #userId)")
+    public ResponseEntity<Boolean> delete(@RequestParam String sasCode,  @RequestHeader(value = "userId") String userId){
         return ResponseEntity.ok(projectService.delete(sasCode));
     }
 
     @GetMapping("")
     @PreAuthorize("hasAuthority(@Privilege.PROJECT_INFO)")
-    public ResponseEntity<List<Project>> get(){
-        return ResponseEntity.ok(projectService.get());
+    public ResponseEntity<Optional<List<Project>>> get(@RequestHeader(value = "userId") String userId){
+        return ResponseEntity.ok(projectService.getAll(userId));
     }
 
     @GetMapping(value = "", params = "sasCode")
-    @PreAuthorize("hasAuthority(@Privilege.PROJECT_INFO)")
-    public ResponseEntity<Optional<Project>> get(@RequestParam("sasCode") String sasCode){
+    @PreAuthorize("hasAuthority(@Privilege.PROJECT_INFO)" + "&& @ownershipCheck.checkProjectOwner(#sasCode, #userId)")
+    public ResponseEntity<Optional<Project>> get(@RequestParam("sasCode") String sasCode, @RequestHeader(value = "userId") String userId){
         return ResponseEntity.ok(projectService.get(sasCode));
     }
 }
