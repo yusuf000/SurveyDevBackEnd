@@ -10,4 +10,5 @@ public final class RoleConstants {
     public static final String CLIENT = "Client";
     public static final String SUPERVISOR = "Supervisor";
     public static final String SUPER_ADMIN = "Super Admin";
+    public static final String ADMIN = "Admin";
 }

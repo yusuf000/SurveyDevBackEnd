@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.example.authenticationservice.authentication.constants.RoleConstants.SUPER_ADMIN;
+import static com.example.authenticationservice.authentication.constants.RoleConstants.ADMIN;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +31,7 @@ public class AuthenticationService {
                 .name(request.getName())
                 .userId(request.getUserId())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .roles(Set.of(roleRepository.findByName(SUPER_ADMIN)))
+                .roles(Set.of(roleRepository.findByName(ADMIN)))
                 .build();
         if (userRepository.findByUserId(user.getUserId()).isPresent()) {
             return false;

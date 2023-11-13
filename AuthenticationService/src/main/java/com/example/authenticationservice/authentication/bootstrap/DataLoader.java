@@ -12,9 +12,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static com.example.authenticationservice.authentication.constants.PrivilegeConstants.*;
+import static com.example.authenticationservice.authentication.constants.RoleConstants.ADMIN;
 import static com.example.authenticationservice.authentication.constants.RoleConstants.SUPER_ADMIN;
 
 @Component
@@ -28,8 +30,11 @@ public class DataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) {
         if (privilegeRepository.count() == 0) populatePrivileges();
-        if (roleRepository.count() == 0) createAdminRole();
-        if (userRepository.count() == 0) createUserAdmin();
+        if (roleRepository.count() == 0){
+            createSuperAdminRole();
+            createAdminRole();
+        }
+        if (userRepository.count() == 0) createUserSuperAdmin();
     }
 
     private void populatePrivileges() {
@@ -55,15 +60,29 @@ public class DataLoader implements CommandLineRunner {
         );
     }
 
-    private void createAdminRole() {
-        Role roleAdmin = Role.builder()
+    private void createSuperAdminRole() {
+        Role roleSuperAdmin = Role.builder()
                 .name(SUPER_ADMIN)
                 .privileges(new HashSet<>(privilegeRepository.findAll()))
+                .build();
+        roleRepository.save(roleSuperAdmin);
+    }
+
+    private void createAdminRole() {
+        Set<Privilege> privileges = new HashSet<>(privilegeRepository.findAll());
+        Optional<Privilege> languagePrivilege = privilegeRepository.findByName(LANGUAGE_CREATE);
+        languagePrivilege.ifPresent(privileges::remove);
+        Optional<Privilege> questionTypePrivilege = privilegeRepository.findByName(QUESTION_TYPE_CREATE);
+        questionTypePrivilege.ifPresent(privileges::remove);
+
+        Role roleAdmin = Role.builder()
+                .name(ADMIN)
+                .privileges(privileges)
                 .build();
         roleRepository.save(roleAdmin);
     }
 
-    private void createUserAdmin() {
+    private void createUserSuperAdmin() {
         User userAdmin = User.builder()
                 .name("admin")
                 .userId("admin@gmail.com")
