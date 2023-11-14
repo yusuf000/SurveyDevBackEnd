@@ -15,7 +15,7 @@ public class ChoiceFilterController {
     private final ChoiceFilterService choiceFilterService;
 
     @PostMapping("/add")
-    @PreAuthorize("hasAuthority(@Privilege.CHOICE_CREATE)" + "&& @ownershipCheck.checkProjectMembershipFromChoiceId(#request.choiceId, #userId)")
+    @PreAuthorize("hasAuthority(@Privilege.CHOICE_CREATE)" + "&& @ownershipCheckService.checkProjectMembershipFromChoiceId(#request.choiceId, #userId)")
     public ResponseEntity<Boolean> add(
             @RequestBody ChoiceFilterRequest request,
             @RequestHeader(value = "userId") String userId
@@ -24,7 +24,7 @@ public class ChoiceFilterController {
     }
 
     @PostMapping("/delete")
-    @PreAuthorize("hasAuthority(@Privilege.CHOICE_DELETE)" + "&& @ownershipCheck.checkProjectMembershipFromChoiceId(#choiceId, #userId)")
+    @PreAuthorize("hasAuthority(@Privilege.CHOICE_DELETE)" + "&& @ownershipCheckService.checkProjectMembershipFromChoiceId(#choiceId, #userId)")
     public ResponseEntity<Boolean> add(
             @RequestParam Long choiceId,
             @RequestHeader(value = "userId") String userId

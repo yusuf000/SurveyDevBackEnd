@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class QuestionFilterController {
     private final QuestionFilterService questionFilterService;
     @PostMapping("/add")
-    @PreAuthorize("hasAuthority(@Privilege.QUESTION_CREATE)" + "&& @ownershipCheck.checkProjectMembershipFromQuestionId(#request.questionId, #userId)")
+    @PreAuthorize("hasAuthority(@Privilege.QUESTION_CREATE)" + "&& @ownershipCheckService.checkProjectMembershipFromQuestionId(#request.questionId, #userId)")
     public ResponseEntity<Boolean> add(
             @RequestBody QuestionFilterRequest request,
             @RequestHeader("userId") String userId
@@ -23,7 +23,7 @@ public class QuestionFilterController {
     }
 
     @PostMapping("/delete")
-    @PreAuthorize("hasAuthority(@Privilege.QUESTION_DELETE)" + "&& @ownershipCheck.checkProjectMembershipFromQuestionId(#questionId, #userId)")
+    @PreAuthorize("hasAuthority(@Privilege.QUESTION_DELETE)" + "&& @ownershipCheckService.checkProjectMembershipFromQuestionId(#questionId, #userId)")
     public ResponseEntity<Boolean> add(
             @RequestParam Long questionId,
             @RequestHeader("userId") String userId

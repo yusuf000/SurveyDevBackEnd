@@ -19,7 +19,7 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @PostMapping("/add")
-    @PreAuthorize("hasAuthority(@Privilege.QUESTION_CREATE)" + "&& @ownershipCheck.checkProjectMembershipFromQuestionRequest(#request, #userId)")
+    @PreAuthorize("hasAuthority(@Privilege.QUESTION_CREATE)" + "&& @ownershipCheckService.checkProjectMembershipFromQuestionRequest(#request, #userId)")
     public ResponseEntity<Boolean> add(
             @RequestBody QuestionRequest request,
             @RequestHeader(value = "userId") String userId
@@ -28,7 +28,7 @@ public class QuestionController {
     }
 
     @PostMapping("/add-all")
-    @PreAuthorize("hasAuthority(@Privilege.QUESTION_CREATE)" + "&& @ownershipCheck.checkProjectMembershipFromQuestionRequests(#requests, #userId)")
+    @PreAuthorize("hasAuthority(@Privilege.QUESTION_CREATE)" + "&& @ownershipCheckService.checkProjectMembershipFromQuestionRequests(#requests, #userId)")
     public ResponseEntity<Boolean> add(
             @RequestBody List<QuestionRequest> requests,
             @RequestHeader(value = "userId") String userId
@@ -37,7 +37,7 @@ public class QuestionController {
     }
 
     @PostMapping("/delete")
-    @PreAuthorize("hasAuthority(@Privilege.QUESTION_DELETE)" + "&& @ownershipCheck.checkProjectMembershipFromQuestionId(#questionId, #userId)")
+    @PreAuthorize("hasAuthority(@Privilege.QUESTION_DELETE)" + "&& @ownershipCheckService.checkProjectMembershipFromQuestionId(#questionId, #userId)")
     public ResponseEntity<Boolean> delete(
             @RequestParam("questionId") Long questionId,
             @RequestHeader(value = "userId") String userId
@@ -46,7 +46,7 @@ public class QuestionController {
     }
 
     @GetMapping("")
-    @PreAuthorize("hasAuthority(@Privilege.QUESTION_INFO)" + "&& @ownershipCheck.checkProjectMembershipFromSasCode(#sasCode, #userId)")
+    @PreAuthorize("hasAuthority(@Privilege.QUESTION_INFO)" + "&& @ownershipCheckService.checkProjectMembershipFromSasCode(#sasCode, #userId)")
     public ResponseEntity<List<Question>> get(
             @RequestParam("sasCode") String sasCode,
             @RequestHeader(value = "userId") String userId
@@ -55,7 +55,7 @@ public class QuestionController {
     }
 
     @GetMapping(value = "", params = "questionId")
-    @PreAuthorize("hasAuthority(@Privilege.QUESTION_INFO)" + "&& @ownershipCheck.checkProjectMembershipFromQuestionId(#questionId, #userId)")
+    @PreAuthorize("hasAuthority(@Privilege.QUESTION_INFO)" + "&& @ownershipCheckService.checkProjectMembershipFromQuestionId(#questionId, #userId)")
     public ResponseEntity<Optional<Question>> get(
             @RequestParam("questionId") Long questionId,
             @RequestHeader(value = "userId") String userId
@@ -64,7 +64,7 @@ public class QuestionController {
     }
 
     @GetMapping(value = "/next")
-    @PreAuthorize("hasAuthority(@Privilege.QUESTION_INFO)" + "&& @ownershipCheck.checkProjectMembershipFromQuestionId(#questionId, #userId)")
+    @PreAuthorize("hasAuthority(@Privilege.QUESTION_INFO)" + "&& @ownershipCheckService.checkProjectMembershipFromQuestionId(#questionId, #userId)")
     public ResponseEntity<Question> getNext(
             @RequestParam("questionId") Long questionId,
             @RequestHeader("userId") String userId

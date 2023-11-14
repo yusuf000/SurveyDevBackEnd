@@ -1,4 +1,4 @@
-package com.surveyking.questionservice.config;
+package com.surveyking.questionservice.service;
 
 import com.surveyking.questionservice.model.ChoiceRequest;
 import com.surveyking.questionservice.model.QuestionRequest;
@@ -9,14 +9,14 @@ import com.surveyking.questionservice.repository.ChoiceRepository;
 import com.surveyking.questionservice.repository.ProjectRepository;
 import com.surveyking.questionservice.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Component
+@Service
 @RequiredArgsConstructor
-public class OwnershipCheck {
+public class OwnershipCheckService {
     private final ProjectRepository projectRepository;
     private final QuestionRepository questionRepository;
     private final ChoiceRepository choiceRepository;

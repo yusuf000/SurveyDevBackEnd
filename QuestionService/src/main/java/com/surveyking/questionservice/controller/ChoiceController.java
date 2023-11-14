@@ -18,7 +18,7 @@ public class ChoiceController {
     private final ChoiceService choiceService;
 
     @PostMapping("/add")
-    @PreAuthorize("hasAuthority(@Privilege.CHOICE_CREATE)" + "&& @ownershipCheck.checkProjectMembershipFromQuestionId(#request.questionId, #userId)")
+    @PreAuthorize("hasAuthority(@Privilege.CHOICE_CREATE)" + "&& @ownershipCheckService.checkProjectMembershipFromQuestionId(#request.questionId, #userId)")
     public ResponseEntity<Boolean> add(
             @RequestBody ChoiceRequest request,
             @RequestHeader(value = "userId") String userId
@@ -27,7 +27,7 @@ public class ChoiceController {
     }
 
     @PostMapping("/add-all")
-    @PreAuthorize("hasAuthority(@Privilege.CHOICE_CREATE)" + "&& @ownershipCheck.checkProjectMembershipFromChoiceRequests(#requests, #userId)")
+    @PreAuthorize("hasAuthority(@Privilege.CHOICE_CREATE)" + "&& @ownershipCheckService.checkProjectMembershipFromChoiceRequests(#requests, #userId)")
     public ResponseEntity<Boolean> add(
             @RequestBody List<ChoiceRequest> requests,
             @RequestHeader(value = "userId") String userId
@@ -36,7 +36,7 @@ public class ChoiceController {
     }
 
     @PostMapping("/delete")
-    @PreAuthorize("hasAuthority(@Privilege.CHOICE_DELETE)" + "&& @ownershipCheck.checkProjectMembershipFromChoiceId(#choiceId, #userId)")
+    @PreAuthorize("hasAuthority(@Privilege.CHOICE_DELETE)" + "&& @ownershipCheckService.checkProjectMembershipFromChoiceId(#choiceId, #userId)")
     public ResponseEntity<Boolean> delete(
             @RequestParam("choiceId") Long choiceId,
             @RequestHeader(value = "userId") String userId
@@ -45,7 +45,7 @@ public class ChoiceController {
     }
 
     @GetMapping("")
-    @PreAuthorize("hasAuthority(@Privilege.CHOICE_INFO)" + "&& @ownershipCheck.checkProjectMembershipFromQuestionId(#questionId, #userId)")
+    @PreAuthorize("hasAuthority(@Privilege.CHOICE_INFO)" + "&& @ownershipCheckService.checkProjectMembershipFromQuestionId(#questionId, #userId)")
     public ResponseEntity<List<Choice>> get(
             @RequestParam("questionId") Long questionId,
             @RequestHeader(value = "userId") String userId

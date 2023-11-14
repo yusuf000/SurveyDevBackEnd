@@ -24,7 +24,7 @@ public class ProjectController {
     }
 
     @PostMapping("/delete")
-    @PreAuthorize("hasAuthority(@Privilege.PROJECT_DELETE)" + "&& @ownershipCheck.checkProjectOwner(#sasCode, #userId)")
+    @PreAuthorize("hasAuthority(@Privilege.PROJECT_DELETE)" + "&& @ownershipCheckService.checkProjectOwner(#sasCode, #userId)")
     public ResponseEntity<Boolean> delete(@RequestParam String sasCode,  @RequestHeader(value = "userId") String userId){
         return ResponseEntity.ok(projectService.delete(sasCode));
     }
@@ -36,13 +36,13 @@ public class ProjectController {
     }
 
     @GetMapping(value = "", params = "sasCode")
-    @PreAuthorize("hasAuthority(@Privilege.PROJECT_INFO)" + "&& @ownershipCheck.checkProjectOwner(#sasCode, #userId)")
+    @PreAuthorize("hasAuthority(@Privilege.PROJECT_INFO)" + "&& @ownershipCheckService.checkProjectOwner(#sasCode, #userId)")
     public ResponseEntity<Optional<Project>> get(@RequestParam("sasCode") String sasCode, @RequestHeader(value = "userId") String userId){
         return ResponseEntity.ok(projectService.get(sasCode));
     }
 
     @PostMapping("/add-member")
-    @PreAuthorize("hasAuthority(@Privilege.PROJECT_UPDATE)" + "&& @ownershipCheck.checkProjectOwner(#sasCode, #userId)")
+    @PreAuthorize("hasAuthority(@Privilege.PROJECT_UPDATE)" + "&& @ownershipCheckService.checkProjectOwner(#sasCode, #userId)")
     public ResponseEntity<Boolean> addMember(
             @RequestParam("sasCode") String sasCode,
             @RequestParam("memberId") String memberId,
