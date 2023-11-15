@@ -14,13 +14,14 @@ import java.util.List;
 public class AnswerService {
     private final AnswerRepository answerRepository;
 
-    public boolean submit(AnswerRequest request) {
+    public boolean submit(AnswerRequest request, String userId) {
         if (!isValid(request)) return false;
         Answer answer = Answer.builder()
                 .id(AnswerId.builder()
-                        .userId(request.getUserId())
+                        .userId(userId)
                         .questionId(request.getQuestionId())
                         .build())
+                .sasCode(request.getSasCode())
                 .choiceId(request.getChoiceId())
                 .description(request.getDescription())
                 .build();
@@ -30,14 +31,14 @@ public class AnswerService {
 
     private boolean isValid(AnswerRequest request) {
         return !((request.getDescription() == null || request.getDescription().isEmpty())
-                && (request.getChoiceId() == null));
+                && (request.getChoiceId() == null) || request.getSasCode() == null || request.getSasCode().isEmpty());
     }
 
     public List<Answer> getAll(Long questionId) {
         return answerRepository.findAllByIdQuestionId(questionId);
     }
 
-    public List<Answer> getAllForUser(String userId) {
-        return answerRepository.findAllByIdUserId(userId);
+    public List<Answer> getAllForUser(String sasCode, String userId) {
+        return answerRepository.findAllBySasCodeAndIdUserId(sasCode, userId);
     }
 }

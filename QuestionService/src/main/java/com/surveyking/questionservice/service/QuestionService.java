@@ -122,7 +122,7 @@ public class QuestionService {
         if(nextQuestion.isEmpty()) return null;
         if(nextQuestion.get().getQuestionFilter() == null) return nextQuestion.get();
 
-        List<Answer> answers = surveyServiceClient.getAllForUser(userId, PrivilegeConstants.ANSWER_INFO).getBody();
+        List<Answer> answers = surveyServiceClient.getAllForUser(currentQuestion.get().getProject().getSasCode(), userId, PrivilegeConstants.ANSWER_INFO).getBody();
         return findNextQuestion(nextQuestion.get(), answers);
     }
 

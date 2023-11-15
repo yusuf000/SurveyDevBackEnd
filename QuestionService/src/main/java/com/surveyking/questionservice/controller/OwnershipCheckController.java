@@ -15,8 +15,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class OwnershipCheckController {
     private final OwnershipCheckService ownershipCheckService;
 
-    @GetMapping("by-question-id")
+    @GetMapping("/by-question-id")
     public ResponseEntity<Boolean> checkProjectMembershipFromQuestionId(@RequestParam Long questionId, @RequestHeader(value = "userId") String userId){
         return ResponseEntity.ok(ownershipCheckService.checkProjectMembershipFromQuestionId(questionId, userId));
+    }
+
+    @GetMapping("/by-sas-code")
+    public ResponseEntity<Boolean> checkProjectMembershipFromProjectId(@RequestParam String sasCode, @RequestHeader(value = "userId") String userId){
+        return ResponseEntity.ok(ownershipCheckService.checkProjectOwner(sasCode, userId));
     }
 }

@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AnswerRequest {
-    private String userId;
     private Long questionId;
+    private String sasCode;
     private Long choiceId;
     private String description;
 }
