@@ -1,18 +1,8 @@
-Spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/survey
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-    database: mysql
-    database-platform: org.hibernate.dialect.MySQL8Dialect
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://root:root@surveykingcluster.vlvlu3o.mongodb.net/survey?retryWrites=true&w=majority
+      database: survey
   application:
     name: SURVEY-SERVICE
 server:

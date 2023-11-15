@@ -1,18 +1,18 @@
 package com.example.surveyservice.model.entity;
 
 import com.example.surveyservice.model.AnswerId;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.*;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
+@Document("answer")
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Answer {
-    @EmbeddedId
+    @Id
     private AnswerId id;
 
     private String sasCode;
