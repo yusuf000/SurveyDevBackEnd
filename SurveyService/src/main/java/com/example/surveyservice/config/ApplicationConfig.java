@@ -1,6 +1,8 @@
 package com.example.surveyservice.config;
 
+import com.example.surveyservice.converter.RedisAnswerIdToByteConverter;
 import com.example.surveyservice.converter.RedisAnswerIdToStringConverter;
+import com.example.surveyservice.converter.RedisByteToAnswerIdConverter;
 import com.example.surveyservice.converter.RedisStringToAnswerIdConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,8 +22,10 @@ public class ApplicationConfig {
 
     @Bean
     public RedisCustomConversions redisCustomConversions(RedisStringToAnswerIdConverter redisStringToAnswerIdConverter,
-                                                         RedisAnswerIdToStringConverter redisAnswerIdToStringConverter) {
-        return new RedisCustomConversions(Arrays.asList(redisStringToAnswerIdConverter, redisAnswerIdToStringConverter));
+                                                         RedisAnswerIdToStringConverter redisAnswerIdToStringConverter,
+                                                         RedisByteToAnswerIdConverter redisByteToAnswerIdConverter,
+                                                         RedisAnswerIdToByteConverter redisAnswerIdToByteConverter) {
+        return new RedisCustomConversions(Arrays.asList(redisStringToAnswerIdConverter, redisAnswerIdToStringConverter, redisByteToAnswerIdConverter, redisAnswerIdToByteConverter));
     }
 
     @Bean
