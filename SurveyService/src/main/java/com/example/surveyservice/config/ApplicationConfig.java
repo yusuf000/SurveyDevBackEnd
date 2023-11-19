@@ -4,10 +4,10 @@ import com.example.surveyservice.converter.RedisAnswerIdToByteConverter;
 import com.example.surveyservice.converter.RedisAnswerIdToStringConverter;
 import com.example.surveyservice.converter.RedisByteToAnswerIdConverter;
 import com.example.surveyservice.converter.RedisStringToAnswerIdConverter;
+import com.example.surveyservice.model.AnswerId;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.convert.RedisCustomConversions;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 
@@ -29,17 +29,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public RedisTemplate<Object, Object> redisTemplate() {
-        Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
-
-        final RedisTemplate<Object, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(jedisConnectionFactory());
-        template.setDefaultSerializer(jackson2JsonRedisSerializer);
-        template.setKeySerializer(jackson2JsonRedisSerializer);
-        template.setHashValueSerializer(jackson2JsonRedisSerializer);
-        template.setValueSerializer(jackson2JsonRedisSerializer);
-        template.setEnableDefaultSerializer(true);
-
-        return template;
+    public Jackson2JsonRedisSerializer<AnswerId> jackson2JsonRedisSerializer(){
+        return new Jackson2JsonRedisSerializer<>(AnswerId.class);
     }
 }
