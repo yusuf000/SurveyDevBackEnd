@@ -3,7 +3,8 @@ package com.example.surveyservice.service;
 import com.example.surveyservice.model.AnswerId;
 import com.example.surveyservice.model.AnswerRequest;
 import com.example.surveyservice.model.entity.Answer;
-import com.example.surveyservice.repository.AnswerRepository;
+import com.example.surveyservice.model.entity.AnswerCache;
+import com.example.surveyservice.repository.AnswerRedisRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,11 +13,11 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AnswerService {
-    private final AnswerRepository answerRepository;
+    private final AnswerRedisRepository answerRepository;
 
     public boolean submit(AnswerRequest request, String userId) {
         if (!isValid(request)) return false;
-        Answer answer = Answer.builder()
+        AnswerCache answer = AnswerCache.builder()
                 .id(AnswerId.builder()
                         .userId(userId)
                         .questionId(request.getQuestionId())
