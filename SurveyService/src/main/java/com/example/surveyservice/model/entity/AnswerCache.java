@@ -7,7 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
 
-@RedisHash("Answer")
+@RedisHash(value = "Answer", timeToLive = 30 * 60L)
 @Data
 @Builder
 public class AnswerCache {
