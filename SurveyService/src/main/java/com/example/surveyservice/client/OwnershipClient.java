@@ -15,8 +15,8 @@ public interface OwnershipClient {
     );
 
     @GetMapping(value = "/api/v1/ownership/by-sas-code")
-    ResponseEntity<Boolean> checkProjectMembershipFromProjectId(@RequestParam String sasCode,
-                                                                @RequestHeader(value = "userId") String userId
+    ResponseEntity<Boolean> checkProjectMembershipFromProjectSasCode(@RequestParam String sasCode,
+                                                                     @RequestHeader(value = "userId") String userId
     );
 }
 

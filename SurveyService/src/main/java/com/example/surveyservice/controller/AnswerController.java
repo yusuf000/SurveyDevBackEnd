@@ -34,4 +34,10 @@ public class AnswerController {
     public ResponseEntity<List<AnswerCache> > getAllForUser(@RequestParam String sasCode, @RequestHeader(value = "userId") String userId){
         return ResponseEntity.ok(answerService.getAllForUser(sasCode,userId));
     }
+
+    @PostMapping(value = "/complete")
+    @PreAuthorize("hasAuthority(@Privilege.ANSWER_INFO)" + "&& @ownershipCheckService.checkProjectMembershipFromProjectSasCode(#sasCode, #userId)")
+    public ResponseEntity<Boolean > completeSurvey(@RequestParam String sasCode, @RequestHeader(value = "userId") String userId){
+        return ResponseEntity.ok(answerService.completeSurveyForUser(sasCode,userId));
+    }
 }
