@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @WritingConverter
 @RequiredArgsConstructor
 public class RedisByteToAnswerIdConverter implements Converter<AnswerId, byte[]> {
-    private final Jackson2JsonRedisSerializer<AnswerId> jackson2JsonRedisSerializer;
+    private final Jackson2JsonRedisSerializer<AnswerId> jackson2JsonRedisSerializer =  new Jackson2JsonRedisSerializer<>(AnswerId.class);
 
     @Override
     public byte[] convert(AnswerId source) {

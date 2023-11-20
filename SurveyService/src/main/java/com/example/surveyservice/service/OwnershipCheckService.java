@@ -11,6 +11,5 @@ public class OwnershipCheckService {
 
     public boolean checkProjectMembershipFromQuestionId(Long questionId, String userId){
         return Boolean.TRUE.equals(ownershipClient.checkProjectMembershipFromQuestionId(questionId, userId).getBody());
-        //return true;
     }
 }

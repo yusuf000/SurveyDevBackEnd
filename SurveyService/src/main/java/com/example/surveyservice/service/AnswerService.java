@@ -2,7 +2,6 @@ package com.example.surveyservice.service;
 
 import com.example.surveyservice.model.AnswerId;
 import com.example.surveyservice.model.AnswerRequest;
-import com.example.surveyservice.model.entity.Answer;
 import com.example.surveyservice.model.entity.AnswerCache;
 import com.example.surveyservice.repository.AnswerRedisRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,11 +34,11 @@ public class AnswerService {
                 && (request.getChoiceId() == null) || request.getSasCode() == null || request.getSasCode().isEmpty());
     }
 
-    public List<Answer> getAll(Long questionId) {
+    public List<AnswerCache> getAll(Long questionId) {
         return answerRepository.findAllByIdQuestionId(questionId);
     }
 
-    public List<Answer> getAllForUser(String sasCode, String userId) {
+    public List<AnswerCache> getAllForUser(String sasCode, String userId) {
         return answerRepository.findAllBySasCodeAndIdUserId(sasCode, userId);
     }
 }

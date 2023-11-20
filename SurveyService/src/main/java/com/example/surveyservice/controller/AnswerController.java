@@ -1,7 +1,7 @@
 package com.example.surveyservice.controller;
 
 import com.example.surveyservice.model.AnswerRequest;
-import com.example.surveyservice.model.entity.Answer;
+import com.example.surveyservice.model.entity.AnswerCache;
 import com.example.surveyservice.service.AnswerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,13 +25,13 @@ public class AnswerController {
 
     @GetMapping(value = "", params = "questionId")
     @PreAuthorize("hasAuthority(@Privilege.ANSWER_INFO)" + "&& @ownershipCheckService.checkProjectMembershipFromQuestionId(#questionId, #userId)")
-    public ResponseEntity<List<Answer> > getAll(@RequestParam Long questionId, @RequestHeader(value = "userId") String userId){
+    public ResponseEntity<List<AnswerCache> > getAll(@RequestParam Long questionId, @RequestHeader(value = "userId") String userId){
         return ResponseEntity.ok(answerService.getAll(questionId));
     }
 
     @GetMapping(value = "")
     @PreAuthorize("hasAuthority(@Privilege.ANSWER_INFO)")
-    public ResponseEntity<List<Answer> > getAllForUser(@RequestParam String sasCode, @RequestHeader(value = "userId") String userId){
+    public ResponseEntity<List<AnswerCache> > getAllForUser(@RequestParam String sasCode, @RequestHeader(value = "userId") String userId){
         return ResponseEntity.ok(answerService.getAllForUser(sasCode,userId));
     }
 }
