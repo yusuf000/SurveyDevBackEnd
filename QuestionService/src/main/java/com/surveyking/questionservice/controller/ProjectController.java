@@ -49,4 +49,13 @@ public class ProjectController {
             @RequestHeader(value = "userId") String userId){
         return ResponseEntity.ok(projectService.addMember(sasCode, memberId));
     }
+
+    @PostMapping("/remove-member")
+    @PreAuthorize("hasAuthority(@Privilege.PROJECT_UPDATE)" + "&& @ownershipCheckService.checkProjectOwner(#sasCode, #userId)")
+    public ResponseEntity<Boolean> removeMember(
+            @RequestParam("sasCode") String sasCode,
+            @RequestParam("memberId") String memberId,
+            @RequestHeader(value = "userId") String userId){
+        return ResponseEntity.ok(projectService.removeMember(sasCode, memberId));
+    }
 }

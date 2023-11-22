@@ -44,4 +44,14 @@ public class ProjectService {
             return true;
         }
     }
+
+    public Boolean removeMember(String sasCode, String memberId) {
+        Optional<Project> project = projectRepository.findProjectBySasCode(sasCode);
+        if(project.isEmpty()) return false;
+        else{
+            project.get().getMembers().remove(memberId);
+            projectRepository.save(project.get());
+            return true;
+        }
+    }
 }
