@@ -50,8 +50,10 @@ public class Project {
     private Long jobNumber;
 
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "project")
+    @JsonIgnore
     private Set<Question> questions;
 
     @ElementCollection(targetClass = String.class)
+    @JsonIgnore
     private List<String> members;
 }

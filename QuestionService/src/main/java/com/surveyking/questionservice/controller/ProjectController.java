@@ -58,4 +58,12 @@ public class ProjectController {
             @RequestHeader(value = "userId") String userId){
         return ResponseEntity.ok(projectService.removeMember(sasCode, memberId));
     }
+
+    @GetMapping("/member")
+    @PreAuthorize("hasAuthority(@Privilege.PROJECT_INFO)" + "&& @ownershipCheckService.checkProjectOwner(#sasCode, #userId)")
+    public ResponseEntity<List<String>> removeMember(
+            @RequestParam("sasCode") String sasCode,
+            @RequestHeader(value = "userId") String userId){
+        return ResponseEntity.ok(projectService.getMember(sasCode));
+    }
 }

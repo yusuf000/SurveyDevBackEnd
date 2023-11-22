@@ -54,4 +54,12 @@ public class ProjectService {
             return true;
         }
     }
+
+    public List<String> getMember(String sasCode) {
+        Optional<Project> project = projectRepository.findProjectBySasCode(sasCode);
+        if(project.isEmpty()) return List.of();
+        else{
+            return project.get().getMembers();
+        }
+    }
 }
