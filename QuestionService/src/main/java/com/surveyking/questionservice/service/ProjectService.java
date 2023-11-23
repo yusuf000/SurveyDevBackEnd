@@ -56,7 +56,7 @@ public class ProjectService {
         }
     }
 
-    public List<String> getMember(String sasCode) {
+    public List<String> getMembers(String sasCode) {
         Optional<Project> project = projectRepository.findProjectBySasCode(sasCode);
         if(project.isEmpty()) return List.of();
         else{

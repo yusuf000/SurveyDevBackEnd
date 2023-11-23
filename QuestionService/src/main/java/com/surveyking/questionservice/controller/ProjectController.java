@@ -62,9 +62,9 @@ public class ProjectController {
 
     @GetMapping("/member")
     @PreAuthorize("hasAuthority(@Privilege.PROJECT_INFO)" + "&& @ownershipCheckService.checkProjectOwner(#sasCode, #userId)")
-    public Mono<ResponseEntity<List<String>>> removeMember(
+    public Mono<ResponseEntity<List<String>>> getMembers(
             @RequestParam("sasCode") String sasCode,
             @RequestHeader(value = "userId") String userId){
-        return Mono.just(ResponseEntity.ok(projectService.getMember(sasCode)));
+        return Mono.just(ResponseEntity.ok(projectService.getMembers(sasCode)));
     }
 }
