@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,8 +20,8 @@ public class ProjectController {
 
     @PostMapping("/add")
     @PreAuthorize("hasAuthority(@Privilege.PROJECT_CREATE)")
-    public ResponseEntity<Boolean> add(@RequestBody Project project, @RequestHeader(value = "userId") String userId){
-        return ResponseEntity.ok(projectService.add(project,userId));
+    public Mono<ResponseEntity<Boolean>> add(@RequestBody Project project, @RequestHeader(value = "userId") String userId){
+        return Mono.just(ResponseEntity.ok(projectService.add(project,userId)));
     }
 
     @PostMapping("/delete")
@@ -31,39 +32,39 @@ public class ProjectController {
 
     @GetMapping("")
     @PreAuthorize("hasAuthority(@Privilege.PROJECT_INFO)")
-    public ResponseEntity<Optional<List<Project>>> get(@RequestHeader(value = "userId") String userId){
-        return ResponseEntity.ok(projectService.getAll(userId));
+    public Mono<ResponseEntity<Optional<List<Project>>>> get(@RequestHeader(value = "userId") String userId){
+        return Mono.just(ResponseEntity.ok(projectService.getAll(userId)));
     }
 
     @GetMapping(value = "", params = "sasCode")
     @PreAuthorize("hasAuthority(@Privilege.PROJECT_INFO)" + "&& @ownershipCheckService.checkProjectOwner(#sasCode, #userId)")
-    public ResponseEntity<Optional<Project>> get(@RequestParam("sasCode") String sasCode, @RequestHeader(value = "userId") String userId){
-        return ResponseEntity.ok(projectService.get(sasCode));
+    public Mono<ResponseEntity<Optional<Project>>> get(@RequestParam("sasCode") String sasCode, @RequestHeader(value = "userId") String userId){
+        return Mono.just(ResponseEntity.ok(projectService.get(sasCode)));
     }
 
     @PostMapping("/add-member")
     @PreAuthorize("hasAuthority(@Privilege.PROJECT_UPDATE)" + "&& @ownershipCheckService.checkProjectOwner(#sasCode, #userId)")
-    public ResponseEntity<Boolean> addMember(
+    public Mono<ResponseEntity<Boolean>> addMember(
             @RequestParam("sasCode") String sasCode,
             @RequestParam("memberId") String memberId,
             @RequestHeader(value = "userId") String userId){
-        return ResponseEntity.ok(projectService.addMember(sasCode, memberId));
+        return Mono.just(ResponseEntity.ok(projectService.addMember(sasCode, memberId)));
     }
 
     @PostMapping("/remove-member")
     @PreAuthorize("hasAuthority(@Privilege.PROJECT_UPDATE)" + "&& @ownershipCheckService.checkProjectOwner(#sasCode, #userId)")
-    public ResponseEntity<Boolean> removeMember(
+    public Mono<ResponseEntity<Boolean>> removeMember(
             @RequestParam("sasCode") String sasCode,
             @RequestParam("memberId") String memberId,
             @RequestHeader(value = "userId") String userId){
-        return ResponseEntity.ok(projectService.removeMember(sasCode, memberId));
+        return Mono.just(ResponseEntity.ok(projectService.removeMember(sasCode, memberId)));
     }
 
     @GetMapping("/member")
     @PreAuthorize("hasAuthority(@Privilege.PROJECT_INFO)" + "&& @ownershipCheckService.checkProjectOwner(#sasCode, #userId)")
-    public ResponseEntity<List<String>> removeMember(
+    public Mono<ResponseEntity<List<String>>> removeMember(
             @RequestParam("sasCode") String sasCode,
             @RequestHeader(value = "userId") String userId){
-        return ResponseEntity.ok(projectService.getMember(sasCode));
+        return Mono.just(ResponseEntity.ok(projectService.getMember(sasCode)));
     }
 }

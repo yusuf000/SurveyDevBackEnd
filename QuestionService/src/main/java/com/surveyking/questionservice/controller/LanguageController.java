@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -21,13 +22,13 @@ public class LanguageController {
 
     @PostMapping("/add")
     @PreAuthorize("hasAuthority(@Privilege.LANGUAGE_CREATE)")
-    public ResponseEntity<Boolean> add(@RequestBody Language request){
-        return ResponseEntity.ok(languageService.add(request));
+    public Mono<ResponseEntity<Boolean>> add(@RequestBody Language request){
+        return Mono.just(ResponseEntity.ok(languageService.add(request)));
     }
 
     @GetMapping("")
     @PreAuthorize("hasAuthority(@Privilege.LANGUAGE_INFO)")
-    public ResponseEntity<List<Language>> get(){
-        return ResponseEntity.ok(languageService.get());
+    public Mono<ResponseEntity<List<Language>>> get(){
+        return Mono.just(ResponseEntity.ok(languageService.get()));
     }
 }

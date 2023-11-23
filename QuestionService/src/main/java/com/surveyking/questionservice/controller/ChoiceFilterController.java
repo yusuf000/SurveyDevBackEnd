@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 @Controller
 @RequestMapping("/api/v1/choice-filter")
@@ -16,11 +17,11 @@ public class ChoiceFilterController {
 
     @PostMapping("/add")
     @PreAuthorize("hasAuthority(@Privilege.CHOICE_CREATE)" + "&& @ownershipCheckService.checkProjectMembershipFromChoiceId(#request.choiceId, #userId)")
-    public ResponseEntity<Boolean> add(
+    public Mono<ResponseEntity<Boolean>> add(
             @RequestBody ChoiceFilterRequest request,
             @RequestHeader(value = "userId") String userId
     ){
-        return ResponseEntity.ok(choiceFilterService.add(request));
+        return Mono.just(ResponseEntity.ok(choiceFilterService.add(request)));
     }
 
     @PostMapping("/delete")

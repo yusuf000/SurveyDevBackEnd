@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -22,13 +23,13 @@ public class QuestionTypeController {
 
     @PostMapping("/add")
     @PreAuthorize("hasAuthority(@Privilege.QUESTION_TYPE_CREATE)")
-    public ResponseEntity<Boolean> add(@RequestBody QuestionType questionType){
-        return ResponseEntity.ok(questionTypeService.add(questionType));
+    public Mono<ResponseEntity<Boolean>> add(@RequestBody QuestionType questionType){
+        return Mono.just(ResponseEntity.ok(questionTypeService.add(questionType)));
     }
 
     @GetMapping("")
     @PreAuthorize("hasAuthority(@Privilege.QUESTION_TYPE_INFO)")
-    public ResponseEntity<List<QuestionType>> get(){
-        return ResponseEntity.ok(questionTypeService.get());
+    public Mono<ResponseEntity<List<QuestionType>>> get(){
+        return Mono.just(ResponseEntity.ok(questionTypeService.get()));
     }
 }

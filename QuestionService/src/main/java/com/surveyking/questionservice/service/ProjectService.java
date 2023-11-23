@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +17,7 @@ public class ProjectService {
 
     public boolean add(Project project, String userId){
         project.setOwner(userId);
-        project.setMembers(List.of(userId));
+        project.setMembers(Set.of(userId));
         projectRepository.save(project);
         return true;
     }
@@ -59,7 +60,7 @@ public class ProjectService {
         Optional<Project> project = projectRepository.findProjectBySasCode(sasCode);
         if(project.isEmpty()) return List.of();
         else{
-            return project.get().getMembers();
+            return project.get().getMembers().stream().toList();
         }
     }
 }
