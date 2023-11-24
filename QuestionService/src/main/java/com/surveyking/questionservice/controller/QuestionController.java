@@ -65,7 +65,7 @@ public class QuestionController {
     }
 
     @GetMapping(value = "/next")
-    @PreAuthorize("hasAuthority(@Privilege.QUESTION_INFO)" + "&& @ownershipCheckService.checkProjectMembershipFromQuestionId(#questionId, #userId)")
+    @PreAuthorize("hasAuthority(@Privilege.ANSWER_INFO)" + "&& @ownershipCheckService.checkProjectMembershipFromQuestionId(#questionId, #userId)")
     public Mono<ResponseEntity<Question>> getNext(
             @RequestParam("questionId") Long questionId,
             @RequestHeader("userId") String userId
