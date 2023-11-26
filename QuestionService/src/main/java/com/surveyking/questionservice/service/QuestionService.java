@@ -134,9 +134,16 @@ public class QuestionService {
 
     private Set<Choice> getChoices(Set<Choice> choices, List<Answer> answers) {
         Set<Choice> finalChoices = new HashSet<>();
+        if(choices == null || choices.isEmpty()) return finalChoices;
+
         for (Choice choice : choices) {
             if (!skipChoice(choice.getChoiceFilters(), answers)) {
-                finalChoices.add(choice);
+                finalChoices.add(Choice.builder()
+                        .id(choice.getId())
+                        .serial(choice.getSerial())
+                        .value(choice.getValue())
+                        .choices(getChoices(choice.getChoices(), answers))
+                        .build());
             }
         }
         return finalChoices;
