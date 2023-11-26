@@ -47,7 +47,7 @@ public class QuestionService {
     }
 
     public Boolean add(List<QuestionRequest> requests) {
-        if(requests == null || requests.isEmpty()) return true;
+        if (requests == null || requests.isEmpty()) return true;
 
         Optional<Language> language = languageRepository.findLanguageByCode(
                 requests.get(0).getLanguageCode()
@@ -61,7 +61,7 @@ public class QuestionService {
         if (language.isEmpty() || project.isEmpty() || questionType.isEmpty()) return false;
 
         List<Question> questions = new ArrayList<>();
-        for(QuestionRequest request: requests){
+        for (QuestionRequest request : requests) {
             Question question = Question.builder()
                     .serial(request.getSerial())
                     .language(language.get())
@@ -78,17 +78,17 @@ public class QuestionService {
     }
 
     private void setQuestion(Question question, List<Choice> choices) {
-        if(choices == null) return;
-        for(Choice choice: choices){
+        if (choices == null) return;
+        for (Choice choice : choices) {
             choice.setQuestion(question);
         }
         question.setChoices(new HashSet<>(choices));
     }
 
     private void setParent(Choice parent, Set<Choice> choices) {
-        if(choices == null || choices.isEmpty()) return;
+        if (choices == null || choices.isEmpty()) return;
 
-        for(Choice choice: choices){
+        for (Choice choice : choices) {
             choice.setParent(parent);
             setParent(choice, choice.getChoices());
         }
@@ -113,57 +113,109 @@ public class QuestionService {
 
     public Question getNext(String userId, Long questionId) {
         Optional<Question> currentQuestion = questionRepository.findById(questionId);
-        if(currentQuestion.isEmpty()) return null;
-
-        Long nextSerial = currentQuestion.get().getSerial() + 1;
-        Optional<Question> nextQuestion = questionRepository.findBySerial(nextSerial);
-        if(nextQuestion.isEmpty()) return null;
-        if(nextQuestion.get().getQuestionFilter() == null) return nextQuestion.get();
+        if (currentQuestion.isEmpty()) return null;
 
         List<Answer> answers = surveyServiceClient.getAllForUser(currentQuestion.get().getProject().getSasCode(), userId, PrivilegeConstants.ANSWER_INFO).getBody();
-        return findNextQuestion(nextQuestion.get(), answers);
-    }
 
-    private Question findNextQuestion(Question currentQuestion, List<Answer> answers) {
-        if(!skipQuestion(currentQuestion.getQuestionFilter(), answers)){
-            return currentQuestion;
-        }else{
-            Long nextSerial = currentQuestion.getSerial() + 1;
-            Optional<Question> nextQuestion = questionRepository.findBySerial(nextSerial);
-            if(nextQuestion.isEmpty()) return null;
-            if(nextQuestion.get().getQuestionFilter() == null) return nextQuestion.get();
-
-            return findNextQuestion(nextQuestion.get(), answers);
+        Question question = getQuestion(currentQuestion.get(), answers);
+        if (question != null) {
+            Set<Choice> choices = getChoices(question.getChoices(), answers);
+            return Question.builder()
+                    .id(question.getId())
+                    .serial(question.getSerial())
+                    .language(question.getLanguage())
+                    .questionType(question.getQuestionType())
+                    .description(question.getDescription())
+                    .choices(choices)
+                    .build();
         }
+        return null;
     }
 
-    private boolean skipQuestion(QuestionFilter questionFilter, List<Answer> answers) {
-        if(questionFilter == null) return false;
+    private Set<Choice> getChoices(Set<Choice> choices, List<Answer> answers) {
+        Set<Choice> finalChoices = new HashSet<>();
+        for (Choice choice : choices) {
+            if (!skipChoice(choice.getChoiceFilters(), answers)) {
+                finalChoices.add(choice);
+            }
+        }
+        return finalChoices;
+    }
+
+    private boolean skipChoice(ChoiceFilter choiceFilter, List<Answer> answers) {
+        if (choiceFilter == null) return false;
         boolean result = false;
-        for(Answer answer: answers){
+        for (Answer answer : answers) {
             if (
-                    checkAnswer(answer, questionFilter)
+                    checkChoiceFilter(answer, choiceFilter)
             ) {
                 result = true;
                 break;
             }
         }
-        if(questionFilter.getQuestionFilterToAnd() != null) result &= skipQuestion(questionFilter.getQuestionFilterToAnd(), answers);
+        if (choiceFilter.getChoiceFilterToAnd() != null)
+            result &= skipChoice(choiceFilter.getChoiceFilterToAnd(), answers);
 
-        for(QuestionFilter questionFilterOr: questionFilter.getQuestionFiltersToOr()){
+        for (ChoiceFilter choiceFilterOr : choiceFilter.getChoiceFiltersToOr()) {
+            result |= skipChoice(choiceFilterOr, answers);
+        }
+        return result;
+    }
+
+    private boolean checkChoiceFilter(Answer answer, ChoiceFilter choiceFilter) {
+        return checkFilter(answer, choiceFilter.getChoiceIdToFilter(), choiceFilter.getQuestionIdToFilter(), choiceFilter.getValueEqual(), choiceFilter.getValueSmaller(), choiceFilter.getValueGreater());
+    }
+
+    private Question getQuestion(Question currentQuestion, List<Answer> answers) {
+
+        Long nextSerial = currentQuestion.getSerial() + 1;
+        Optional<Question> nextQuestion = questionRepository.findBySerial(nextSerial);
+        if (nextQuestion.isEmpty()) return null;
+        if (nextQuestion.get().getQuestionFilter() == null) return nextQuestion.get();
+
+        return findNextQuestion(nextQuestion.get(), answers);
+    }
+
+    private Question findNextQuestion(Question currentQuestion, List<Answer> answers) {
+        if (!skipQuestion(currentQuestion.getQuestionFilter(), answers)) {
+            return currentQuestion;
+        } else {
+            return getQuestion(currentQuestion, answers);
+        }
+    }
+
+    private boolean skipQuestion(QuestionFilter questionFilter, List<Answer> answers) {
+        if (questionFilter == null) return false;
+        boolean result = false;
+        for (Answer answer : answers) {
+            if (
+                    checkQuestionFilter(answer, questionFilter)
+            ) {
+                result = true;
+                break;
+            }
+        }
+        if (questionFilter.getQuestionFilterToAnd() != null)
+            result &= skipQuestion(questionFilter.getQuestionFilterToAnd(), answers);
+
+        for (QuestionFilter questionFilterOr : questionFilter.getQuestionFiltersToOr()) {
             result |= skipQuestion(questionFilterOr, answers);
         }
         return result;
     }
 
-    private boolean checkAnswer(Answer answer, QuestionFilter questionFilter) {
-        if(answer.getChoiceId().longValue() == questionFilter.getChoiceIdToFilter().longValue()
-                && answer.getId().getQuestionId().longValue() == questionFilter.getQuestionIdToFilter().longValue()){
-            Optional<Choice> choice = choiceRepository.findById(questionFilter.getChoiceIdToFilter());
-            if(choice.isPresent()){
-                return (questionFilter.getValueEqual() == null || questionFilter.getValueEqual().equals(choice.get().getValue()))
-                        && (questionFilter.getValueSmaller() == null || Double.parseDouble(questionFilter.getValueSmaller()) > Double.parseDouble(choice.get().getValue()))
-                        && (questionFilter.getValueSmaller() == null || Double.parseDouble(questionFilter.getValueGreater()) < Double.parseDouble(choice.get().getValue()));
+    private boolean checkQuestionFilter(Answer answer, QuestionFilter questionFilter) {
+        return checkFilter(answer, questionFilter.getChoiceIdToFilter(), questionFilter.getQuestionIdToFilter(), questionFilter.getValueEqual(), questionFilter.getValueSmaller(), questionFilter.getValueGreater());
+    }
+
+    private boolean checkFilter(Answer answer, Long choiceIdToFilter, Long questionIdToFilter, String valueEqual, String valueSmaller, String valueGreater) {
+        if (answer.getChoiceId().longValue() == choiceIdToFilter.longValue()
+                && answer.getId().getQuestionId().longValue() == questionIdToFilter.longValue()) {
+            Optional<Choice> choice = choiceRepository.findById(choiceIdToFilter);
+            if (choice.isPresent()) {
+                return (valueEqual == null || valueEqual.equals(choice.get().getValue()))
+                        && (valueSmaller == null || Double.parseDouble(valueSmaller) > Double.parseDouble(choice.get().getValue()))
+                        && (valueSmaller == null || Double.parseDouble(valueGreater) < Double.parseDouble(choice.get().getValue()));
             }
         }
         return false;
