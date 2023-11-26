@@ -5,10 +5,7 @@ import com.surveyking.questionservice.constants.PrivilegeConstants;
 import com.surveyking.questionservice.model.Answer;
 import com.surveyking.questionservice.model.QuestionRequest;
 import com.surveyking.questionservice.model.entity.*;
-import com.surveyking.questionservice.repository.LanguageRepository;
-import com.surveyking.questionservice.repository.ProjectRepository;
-import com.surveyking.questionservice.repository.QuestionRepository;
-import com.surveyking.questionservice.repository.QuestionTypeRepository;
+import com.surveyking.questionservice.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +18,7 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final LanguageRepository languageRepository;
     private final ProjectRepository projectRepository;
+    private final ChoiceRepository choiceRepository;
     private final QuestionTypeRepository questionTypeRepository;
     private final SurveyServiceClient surveyServiceClient;
 
@@ -144,8 +142,7 @@ public class QuestionService {
         boolean result = false;
         for(Answer answer: answers){
             if (
-                    answer.getChoiceId().longValue() == questionFilter.getChoiceIdToFilter().longValue()
-                            && answer.getId().getQuestionId().longValue() == questionFilter.getQuestionIdToFilter().longValue()
+                    checkAnswer(answer, questionFilter)
             ) {
                 result = true;
                 break;
@@ -157,5 +154,18 @@ public class QuestionService {
             result |= skipQuestion(questionFilterOr, answers);
         }
         return result;
+    }
+
+    private boolean checkAnswer(Answer answer, QuestionFilter questionFilter) {
+        if(answer.getChoiceId().longValue() == questionFilter.getChoiceIdToFilter().longValue()
+                && answer.getId().getQuestionId().longValue() == questionFilter.getQuestionIdToFilter().longValue()){
+            Optional<Choice> choice = choiceRepository.findById(questionFilter.getChoiceIdToFilter());
+            if(choice.isPresent()){
+                return (questionFilter.getValueEqual() == null || questionFilter.getValueEqual().equals(choice.get().getValue()))
+                        && (questionFilter.getValueSmaller() == null || Double.parseDouble(questionFilter.getValueSmaller()) > Double.parseDouble(choice.get().getValue()))
+                        && (questionFilter.getValueSmaller() == null || Double.parseDouble(questionFilter.getValueGreater()) < Double.parseDouble(choice.get().getValue()));
+            }
+        }
+        return false;
     }
 }

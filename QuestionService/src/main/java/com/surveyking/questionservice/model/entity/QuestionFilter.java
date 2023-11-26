@@ -28,6 +28,10 @@ public class QuestionFilter {
     @Column(nullable = false)
     private Long choiceIdToFilter;
 
+    private String valueEqual;
+    private String valueGreater;
+    private String valueSmaller;
+
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
