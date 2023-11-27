@@ -1,7 +1,7 @@
 package com.example.surveyservice.controller;
 
-import com.example.surveyservice.model.AnswerRequest;
-import com.example.surveyservice.model.entity.AnswerCache;
+import com.example.surveyservice.model.ResponseRequest;
+import com.example.surveyservice.model.entity.ResponseCache;
 import com.example.surveyservice.service.AnswerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,19 +19,19 @@ public class AnswerController {
 
     @PostMapping("/submit")
     @PreAuthorize("@ownershipCheckService.checkProjectMembershipFromQuestionId(#request.questionId, #userId)")
-    public ResponseEntity<Boolean> submit(@RequestBody AnswerRequest request, @RequestHeader(value = "userId") String userId){
+    public ResponseEntity<Boolean> submit(@RequestBody ResponseRequest request, @RequestHeader(value = "userId") String userId){
         return ResponseEntity.ok(answerService.submit(request, userId));
     }
 
     @GetMapping(value = "", params = "questionId")
     @PreAuthorize("hasAuthority(@Privilege.ANSWER_INFO)" + "&& @ownershipCheckService.checkProjectMembershipFromQuestionId(#questionId, #userId)")
-    public ResponseEntity<List<AnswerCache> > getAll(@RequestParam Long questionId, @RequestHeader(value = "userId") String userId){
+    public ResponseEntity<List<ResponseCache> > getAll(@RequestParam Long questionId, @RequestHeader(value = "userId") String userId){
         return ResponseEntity.ok(answerService.getAll(questionId));
     }
 
     @GetMapping(value = "")
     @PreAuthorize("hasAuthority(@Privilege.ANSWER_INFO)")
-    public ResponseEntity<List<AnswerCache> > getAllForUser(@RequestParam String sasCode, @RequestHeader(value = "userId") String userId){
+    public ResponseEntity<List<ResponseCache> > getAllForUser(@RequestParam String sasCode, @RequestHeader(value = "userId") String userId){
         return ResponseEntity.ok(answerService.getAllForUser(sasCode,userId));
     }
 

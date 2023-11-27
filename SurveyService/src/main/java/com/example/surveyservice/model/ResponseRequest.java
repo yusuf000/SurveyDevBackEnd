@@ -7,9 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AnswerRequest {
+public class ResponseRequest {
     private Long questionId;
     private String sasCode;
     private Long choiceId;
+    private Long serial;
     private String description;
 }
