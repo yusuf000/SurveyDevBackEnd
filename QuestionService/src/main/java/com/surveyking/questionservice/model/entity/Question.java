@@ -31,7 +31,7 @@ public class Question {
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private Project project;
+    private Phase phase;
 
     @Column(nullable = false, length = 1000)
     private String description;

@@ -50,7 +50,7 @@ public class Project {
 
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "project")
     @JsonIgnore
-    private Set<Question> questions;
+    private Set<Phase> phases;
 
     @ElementCollection(targetClass = String.class)
     @JsonIgnore

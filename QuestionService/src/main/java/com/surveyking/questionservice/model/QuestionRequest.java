@@ -16,7 +16,7 @@ public class QuestionRequest {
     private Long serial;
     private String languageCode;
     private String questionType;
-    private String projectSasCode;
+    private Long phaseId;
     private String description;
     private List<Choice> choices;
 }

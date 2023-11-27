@@ -17,7 +17,7 @@ public class QuestionService {
 
     private final QuestionRepository questionRepository;
     private final LanguageRepository languageRepository;
-    private final ProjectRepository projectRepository;
+    private final PhaseRepository phaseRepository;
     private final ChoiceRepository choiceRepository;
     private final QuestionTypeRepository questionTypeRepository;
     private final SurveyServiceClient surveyServiceClient;
@@ -26,18 +26,18 @@ public class QuestionService {
         Optional<Language> language = languageRepository.findLanguageByCode(
                 request.getLanguageCode()
         );
-        Optional<Project> project = projectRepository.findProjectBySasCode(
-                request.getProjectSasCode()
+        Optional<Phase> phase = phaseRepository.findById(
+                request.getPhaseId()
         );
         Optional<QuestionType> questionType = questionTypeRepository.findQuestionTypeByName(
                 request.getQuestionType()
         );
-        if (language.isEmpty() || project.isEmpty() || questionType.isEmpty()) return false;
+        if (language.isEmpty() || phase.isEmpty() || questionType.isEmpty()) return false;
         Question question = Question.builder()
                 .serial(request.getSerial())
                 .language(language.get())
                 .questionType(questionType.get())
-                .project(project.get())
+                .phase(phase.get())
                 .description(request.getDescription())
                 .build();
         setQuestion(question, request.getChoices());
@@ -52,13 +52,13 @@ public class QuestionService {
         Optional<Language> language = languageRepository.findLanguageByCode(
                 requests.get(0).getLanguageCode()
         );
-        Optional<Project> project = projectRepository.findProjectBySasCode(
-                requests.get(0).getProjectSasCode()
+        Optional<Phase> phase = phaseRepository.findById(
+                requests.get(0).getPhaseId()
         );
         Optional<QuestionType> questionType = questionTypeRepository.findQuestionTypeByName(
                 requests.get(0).getQuestionType()
         );
-        if (language.isEmpty() || project.isEmpty() || questionType.isEmpty()) return false;
+        if (language.isEmpty() || phase.isEmpty() || questionType.isEmpty()) return false;
 
         List<Question> questions = new ArrayList<>();
         for (QuestionRequest request : requests) {
@@ -66,7 +66,7 @@ public class QuestionService {
                     .serial(request.getSerial())
                     .language(language.get())
                     .questionType(questionType.get())
-                    .project(project.get())
+                    .phase(phase.get())
                     .description(request.getDescription())
                     .build();
             setQuestion(question, request.getChoices());
@@ -94,12 +94,12 @@ public class QuestionService {
         }
     }
 
-    public List<Question> get(String sasCode) {
-        Optional<Project> project = projectRepository.findProjectBySasCode(
-                sasCode
+    public List<Question> getByPhaseId(Long phaseId) {
+        Optional<Phase> phase = phaseRepository.findById(
+                phaseId
         );
-        if (project.isEmpty()) return Collections.emptyList();
-        return questionRepository.findAllByProject(project.get());
+        if (phase.isEmpty()) return Collections.emptyList();
+        return questionRepository.findAllByPhase(phase.get());
     }
 
     public boolean delete(Long questionId) {
@@ -115,7 +115,7 @@ public class QuestionService {
         Optional<Question> currentQuestion = questionRepository.findById(questionId);
         if (currentQuestion.isEmpty()) return null;
 
-        List<Answer> answers = surveyServiceClient.getAllForUser(currentQuestion.get().getProject().getSasCode(), userId, PrivilegeConstants.ANSWER_INFO).getBody();
+        List<Answer> answers = surveyServiceClient.getAllForUser(currentQuestion.get().getPhase().getProject().getSasCode(), userId, PrivilegeConstants.ANSWER_INFO).getBody();
 
         Question question = getQuestion(currentQuestion.get(), answers);
         if (question != null) {
