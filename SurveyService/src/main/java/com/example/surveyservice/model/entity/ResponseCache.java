@@ -2,7 +2,8 @@ package com.example.surveyservice.model.entity;
 
 import com.example.surveyservice.model.AnswerId;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.redis.core.RedisHash;
@@ -11,7 +12,8 @@ import org.springframework.data.redis.core.index.Indexed;
 import java.util.Set;
 
 @RedisHash(value = "Response", timeToLive = 24 * 60 * 60L)
-@Data
+@Getter
+@Setter
 @Builder
 public class ResponseCache {
     @Id
