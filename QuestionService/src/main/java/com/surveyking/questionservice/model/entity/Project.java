@@ -23,9 +23,6 @@ public class Project {
     @Column(nullable = false, length = 45)
     private String name;
 
-    @Column(nullable = false, length = 20)
-    private String type;
-
     @Column(name = Constants.clientName, nullable = false, length = 50)
     private String clientName;
 
@@ -47,6 +44,7 @@ public class Project {
     @Column(name = Constants.jobNumber, nullable = false, length = 20)
     private Long jobNumber;
 
+    @Column(name = Constants.projectType, nullable = false)
     private ProjectType projectType;
 
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "project")
