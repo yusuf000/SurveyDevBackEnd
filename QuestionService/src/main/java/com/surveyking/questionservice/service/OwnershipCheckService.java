@@ -25,6 +25,7 @@ public class OwnershipCheckService {
     private final ChoiceRepository choiceRepository;
 
     public boolean checkProjectOwner(String sasCode, String userId){
+        if(sasCode == null || sasCode.isEmpty()) return false;
         Optional<Project> project = projectRepository.findProjectBySasCode(sasCode);
         if(project.isEmpty()) return false;
         else{
@@ -33,6 +34,7 @@ public class OwnershipCheckService {
     }
 
     public boolean checkProjectMembershipFromPhaseId(Long phaseId, String userId){
+        if(phaseId == null) return false;
         Optional<Phase> phase = phaseRepository.findById(phaseId);
         if(phase.isEmpty()) return false;
         else{
@@ -50,6 +52,7 @@ public class OwnershipCheckService {
     }
 
     public boolean checkProjectMembershipFromQuestionId(Long questionId, String userId) {
+        if(questionId == null) return false;
         Optional<Question> question = questionRepository.findById(questionId);
         if(question.isEmpty()) return false;
         else{
@@ -67,6 +70,7 @@ public class OwnershipCheckService {
     }
 
     public boolean checkProjectMembershipFromChoiceId(Long choiceId, String userId) {
+        if(choiceId == null) return false;
         Optional<Choice> choice = choiceRepository.findById(choiceId);
         if(choice.isEmpty()) return false;
         else{

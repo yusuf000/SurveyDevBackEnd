@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,9 +21,10 @@ public class PhaseService {
         Optional<Project> project = projectRepository.findProjectBySasCode(sasCode);
         if (project.isEmpty()) return false;
 
-        phaseRepository.save(Phase.builder()
+        Phase phase = Phase.builder()
                 .project(project.get())
-                .build());
+                .build();
+        phaseRepository.save(phase);
         return true;
     }
 
@@ -33,11 +35,11 @@ public class PhaseService {
         phaseRepository.delete(phase.get());
         return true;
     }
-    public List<Phase> get(String sasCode) {
-        Optional<Project> project = projectRepository.findProjectBySasCode(sasCode);
+    public List<Long> get(String sasCode) {
+        Optional<Project> project = projectRepository.getProjectByCode(sasCode);
         if (project.isEmpty()) return List.of();
 
-        return project.get().getPhases().stream().toList();
+        return project.get().getPhases().stream().map(Phase::getId).collect(Collectors.toList());
     }
 
 }

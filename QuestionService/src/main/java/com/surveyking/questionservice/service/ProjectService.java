@@ -32,8 +32,10 @@ public class ProjectService {
         return projectRepository.findProjectByOwner(userId);
     }
 
-    public Optional<Project> get(String sasCode){
-        return projectRepository.findProjectBySasCode(sasCode);
+    public Project get(String sasCode){
+        Optional<Project> project = projectRepository.findProjectBySasCode(sasCode);
+        if(project.isEmpty()) return null;
+        return project.get();
     }
 
     public Boolean addMember(String sasCode, String memberId) {

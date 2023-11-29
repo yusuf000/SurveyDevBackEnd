@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/api/v1/question")
@@ -57,7 +56,7 @@ public class QuestionController {
 
     @GetMapping(value = "", params = "questionId")
     @PreAuthorize("hasAuthority(@Privilege.QUESTION_INFO)" + "&& @ownershipCheckService.checkProjectMembershipFromQuestionId(#questionId, #userId)")
-    public Mono<ResponseEntity<Optional<Question>>> getByQuestionId(
+    public Mono<ResponseEntity<Question>> getByQuestionId(
             @RequestParam("questionId") Long questionId,
             @RequestHeader(value = "userId") String userId
     ) {

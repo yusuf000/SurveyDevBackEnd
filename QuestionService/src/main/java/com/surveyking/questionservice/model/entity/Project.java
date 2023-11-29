@@ -1,16 +1,15 @@
 package com.surveyking.questionservice.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.surveyking.questionservice.model.ProjectType;
 import com.surveyking.questionservice.util.Constants;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -47,6 +46,8 @@ public class Project {
 
     @Column(name = Constants.jobNumber, nullable = false, length = 20)
     private Long jobNumber;
+
+    private ProjectType projectType;
 
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "project")
     @JsonIgnore

@@ -99,7 +99,8 @@ public class QuestionService {
                 phaseId
         );
         if (phase.isEmpty()) return Collections.emptyList();
-        return questionRepository.findAllByPhase(phase.get());
+ //       return phase.get().getQuestions().stream().toList();
+        return null;
     }
 
     public boolean delete(Long questionId) {
@@ -107,8 +108,10 @@ public class QuestionService {
         return true;
     }
 
-    public Optional<Question> get(Long questionId) {
-        return questionRepository.findById(questionId);
+    public Question get(Long questionId) {
+        Optional<Question> question = questionRepository.findById(questionId);
+        if(question.isEmpty())return null;
+        return question.get();
     }
 
     public Question getNext(String userId, Long questionId) {

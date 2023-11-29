@@ -38,7 +38,7 @@ public class ProjectController {
 
     @GetMapping(value = "", params = "sasCode")
     @PreAuthorize("hasAuthority(@Privilege.PROJECT_INFO)" + "&& @ownershipCheckService.checkProjectOwner(#sasCode, #userId)")
-    public Mono<ResponseEntity<Optional<Project>>> get(@RequestParam("sasCode") String sasCode, @RequestHeader(value = "userId") String userId){
+    public Mono<ResponseEntity<Project>> get(@RequestParam("sasCode") String sasCode, @RequestHeader(value = "userId") String userId){
         return Mono.just(ResponseEntity.ok(projectService.get(sasCode)));
     }
 
