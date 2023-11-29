@@ -41,7 +41,7 @@ public class PhaseService {
         return true;
     }
     public List<Phase> get(String sasCode) {
-        Optional<Project> project = projectRepository.getProjectByCode(sasCode);
+        Optional<Project> project = projectRepository.findProjectBySasCode(sasCode);
         if (project.isEmpty()) return List.of();
 
         return project.get().getPhases().stream().toList();

@@ -32,9 +32,17 @@ public class ProjectService {
         project.setOwner(userId);
         project.setMembers(Set.of(userId));
         Set<Phase> phases = new HashSet<>();
-        for(Phase phase: projectRequest.getPhases()){
-            phase.setProject(project);
-            phases.add(phase);
+        if (projectRequest.getPhases() == null || project.getPhases().isEmpty()) {
+            phases.add(Phase.builder()
+                    .serial(0)
+                    .name(project.getName())
+                    .project(project)
+                    .build());
+        } else {
+            for (Phase phase : projectRequest.getPhases()) {
+                phase.setProject(project);
+                phases.add(phase);
+            }
         }
         project.setPhases(phases);
         projectRepository.save(project);
@@ -83,5 +91,11 @@ public class ProjectService {
         else {
             return project.get().getMembers().stream().toList();
         }
+    }
+
+    public int getRunningProjectCount(String userId) {
+        Optional<List<Project>> runningProjects = projectRepository.findProjectByOwnerAndStatus(userId, "running");
+        if(runningProjects.isEmpty()) return 0;
+        return runningProjects.get().size();
     }
 }

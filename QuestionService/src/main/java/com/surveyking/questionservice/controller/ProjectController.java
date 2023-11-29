@@ -68,4 +68,11 @@ public class ProjectController {
             @RequestHeader(value = "userId") String userId) {
         return Mono.just(ResponseEntity.ok(projectService.getMembers(sasCode)));
     }
+
+    @GetMapping("/running")
+    @PreAuthorize("hasAuthority(@Privilege.PROJECT_INFO)")
+    public Mono<ResponseEntity<Integer>> getRunningProjectCount(
+            @RequestHeader(value = "userId") String userId) {
+        return Mono.just(ResponseEntity.ok(projectService.getRunningProjectCount(userId)));
+    }
 }
