@@ -1,11 +1,14 @@
 package com.surveyking.questionservice.service;
 
+import com.surveyking.questionservice.model.ProjectType;
+import com.surveyking.questionservice.model.entity.Phase;
 import com.surveyking.questionservice.model.entity.Project;
 import com.surveyking.questionservice.repository.ProjectRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -15,33 +18,52 @@ import java.util.Set;
 public class ProjectService {
     private final ProjectRepository projectRepository;
 
-    public boolean add(Project project, String userId){
+    public boolean add(Project project, String userId) {
         project.setOwner(userId);
         project.setMembers(Set.of(userId));
+        if (project.getProjectType() == ProjectType.MULTI_PHASE) {
+            Set<Phase> phases = new HashSet<>();
+            for (int i = 0; i < project.getNumberOfPhases(); i++) {
+                phases.add(Phase.builder()
+                        .project(project)
+                        .serial(i)
+                        .build()
+                );
+            }
+            project.setPhases(phases);
+        } else {
+            project.setPhases(Set.of(
+                            Phase.builder()
+                                    .project(project)
+                                    .serial(0)
+                                    .build()
+                    )
+            );
+        }
         projectRepository.save(project);
         return true;
     }
 
     @Transactional
-    public boolean  delete(String sasCode) {
+    public boolean delete(String sasCode) {
         projectRepository.deleteBySasCode(sasCode);
         return true;
     }
 
-    public Optional<List<Project>> getAll(String userId){
+    public Optional<List<Project>> getAll(String userId) {
         return projectRepository.findProjectByOwner(userId);
     }
 
-    public Project get(String sasCode){
+    public Project get(String sasCode) {
         Optional<Project> project = projectRepository.findProjectBySasCode(sasCode);
-        if(project.isEmpty()) return null;
+        if (project.isEmpty()) return null;
         return project.get();
     }
 
     public Boolean addMember(String sasCode, String memberId) {
         Optional<Project> project = projectRepository.findProjectBySasCode(sasCode);
-        if(project.isEmpty()) return false;
-        else{
+        if (project.isEmpty()) return false;
+        else {
             project.get().getMembers().add(memberId);
             projectRepository.save(project.get());
             return true;
@@ -50,8 +72,8 @@ public class ProjectService {
 
     public Boolean removeMember(String sasCode, String memberId) {
         Optional<Project> project = projectRepository.findProjectBySasCode(sasCode);
-        if(project.isEmpty()) return false;
-        else{
+        if (project.isEmpty()) return false;
+        else {
             project.get().getMembers().remove(memberId);
             projectRepository.save(project.get());
             return true;
@@ -60,8 +82,8 @@ public class ProjectService {
 
     public List<String> getMembers(String sasCode) {
         Optional<Project> project = projectRepository.findProjectBySasCode(sasCode);
-        if(project.isEmpty()) return List.of();
-        else{
+        if (project.isEmpty()) return List.of();
+        else {
             return project.get().getMembers().stream().toList();
         }
     }

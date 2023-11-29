@@ -19,6 +19,8 @@ public class Phase {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private Integer serial;
+
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore

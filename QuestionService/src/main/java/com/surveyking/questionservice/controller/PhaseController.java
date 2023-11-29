@@ -1,5 +1,6 @@
 package com.surveyking.questionservice.controller;
 
+import com.surveyking.questionservice.model.entity.Phase;
 import com.surveyking.questionservice.service.PhaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class PhaseController {
 
     @GetMapping("")
     @PreAuthorize("hasAuthority(@Privilege.PROJECT_INFO)" + "&& @ownershipCheckService.checkProjectOwner(#sasCode, #userId)")
-    public Mono<ResponseEntity<List<Long>>> get(@RequestParam("sasCode")  String sasCode, @RequestHeader(value = "userId") String userId){
+    public Mono<ResponseEntity<List<Phase>>> get(@RequestParam("sasCode")  String sasCode, @RequestHeader(value = "userId") String userId){
         return Mono.just(ResponseEntity.ok(phaseService.get(sasCode)));
     }
 }
