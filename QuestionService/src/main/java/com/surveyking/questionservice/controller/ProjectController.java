@@ -1,5 +1,6 @@
 package com.surveyking.questionservice.controller;
 
+import com.surveyking.questionservice.model.ProjectRequest;
 import com.surveyking.questionservice.model.entity.Project;
 import com.surveyking.questionservice.service.ProjectService;
 import lombok.RequiredArgsConstructor;
@@ -20,25 +21,25 @@ public class ProjectController {
 
     @PostMapping("/add")
     @PreAuthorize("hasAuthority(@Privilege.PROJECT_CREATE)")
-    public Mono<ResponseEntity<Boolean>> add(@RequestBody Project project, @RequestHeader(value = "userId") String userId){
-        return Mono.just(ResponseEntity.ok(projectService.add(project,userId)));
+    public Mono<ResponseEntity<Boolean>> add(@RequestBody ProjectRequest projectRequest, @RequestHeader(value = "userId") String userId) {
+        return Mono.just(ResponseEntity.ok(projectService.add(projectRequest, userId)));
     }
 
     @PostMapping("/delete")
     @PreAuthorize("hasAuthority(@Privilege.PROJECT_DELETE)" + "&& @ownershipCheckService.checkProjectOwner(#sasCode, #userId)")
-    public ResponseEntity<Boolean> delete(@RequestParam String sasCode,  @RequestHeader(value = "userId") String userId){
+    public ResponseEntity<Boolean> delete(@RequestParam String sasCode, @RequestHeader(value = "userId") String userId) {
         return ResponseEntity.ok(projectService.delete(sasCode));
     }
 
     @GetMapping("")
     @PreAuthorize("hasAuthority(@Privilege.PROJECT_INFO)")
-    public Mono<ResponseEntity<Optional<List<Project>>>> get(@RequestHeader(value = "userId") String userId){
+    public Mono<ResponseEntity<Optional<List<Project>>>> get(@RequestHeader(value = "userId") String userId) {
         return Mono.just(ResponseEntity.ok(projectService.getAll(userId)));
     }
 
     @GetMapping(value = "", params = "sasCode")
     @PreAuthorize("hasAuthority(@Privilege.PROJECT_INFO)" + "&& @ownershipCheckService.checkProjectOwner(#sasCode, #userId)")
-    public Mono<ResponseEntity<Project>> get(@RequestParam("sasCode") String sasCode, @RequestHeader(value = "userId") String userId){
+    public Mono<ResponseEntity<Project>> get(@RequestParam("sasCode") String sasCode, @RequestHeader(value = "userId") String userId) {
         return Mono.just(ResponseEntity.ok(projectService.get(sasCode)));
     }
 
@@ -47,7 +48,7 @@ public class ProjectController {
     public Mono<ResponseEntity<Boolean>> addMember(
             @RequestParam("sasCode") String sasCode,
             @RequestParam("memberId") String memberId,
-            @RequestHeader(value = "userId") String userId){
+            @RequestHeader(value = "userId") String userId) {
         return Mono.just(ResponseEntity.ok(projectService.addMember(sasCode, memberId)));
     }
 
@@ -56,7 +57,7 @@ public class ProjectController {
     public Mono<ResponseEntity<Boolean>> removeMember(
             @RequestParam("sasCode") String sasCode,
             @RequestParam("memberId") String memberId,
-            @RequestHeader(value = "userId") String userId){
+            @RequestHeader(value = "userId") String userId) {
         return Mono.just(ResponseEntity.ok(projectService.removeMember(sasCode, memberId)));
     }
 
@@ -64,7 +65,7 @@ public class ProjectController {
     @PreAuthorize("hasAuthority(@Privilege.PROJECT_INFO)" + "&& @ownershipCheckService.checkProjectOwner(#sasCode, #userId)")
     public Mono<ResponseEntity<List<String>>> getMembers(
             @RequestParam("sasCode") String sasCode,
-            @RequestHeader(value = "userId") String userId){
+            @RequestHeader(value = "userId") String userId) {
         return Mono.just(ResponseEntity.ok(projectService.getMembers(sasCode)));
     }
 }

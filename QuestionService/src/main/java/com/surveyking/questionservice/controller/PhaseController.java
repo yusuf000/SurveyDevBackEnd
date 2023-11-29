@@ -19,8 +19,8 @@ public class PhaseController {
 
     @PostMapping("/add")
     @PreAuthorize("hasAuthority(@Privilege.PROJECT_CREATE)" + "&& @ownershipCheckService.checkProjectOwner(#sasCode, #userId)")
-    public Mono<ResponseEntity<Boolean>> add(@RequestParam("sasCode")  String sasCode, @RequestHeader(value = "userId") String userId){
-        return Mono.just(ResponseEntity.ok(phaseService.add(sasCode)));
+    public Mono<ResponseEntity<Boolean>> add(@RequestParam("sasCode")  String sasCode, @RequestParam("name")  String name, @RequestHeader(value = "userId") String userId){
+        return Mono.just(ResponseEntity.ok(phaseService.add(sasCode, name)));
     }
 
     @PostMapping("/delete")

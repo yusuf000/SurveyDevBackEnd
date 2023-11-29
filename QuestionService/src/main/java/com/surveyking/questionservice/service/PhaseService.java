@@ -7,6 +7,7 @@ import com.surveyking.questionservice.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,12 +17,17 @@ public class PhaseService {
     private final ProjectRepository projectRepository;
     private final PhaseRepository phaseRepository;
 
-    public Boolean add(String sasCode) {
+    public Boolean add(String sasCode, String name) {
         Optional<Project> project = projectRepository.findProjectBySasCode(sasCode);
         if (project.isEmpty()) return false;
+        Optional<Phase> lastPhase = project.get().getPhases().stream().max(Comparator.comparingInt(Phase::getSerial));
+        int serial = 0;
+        if(lastPhase.isPresent()) serial = lastPhase.get().getSerial() + 1;
 
         Phase phase = Phase.builder()
                 .project(project.get())
+                .name(name)
+                .serial(serial)
                 .build();
         phaseRepository.save(phase);
         return true;

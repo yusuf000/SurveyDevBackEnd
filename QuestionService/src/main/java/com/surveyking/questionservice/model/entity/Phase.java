@@ -21,6 +21,8 @@ public class Phase {
 
     private Integer serial;
 
+    private String name;
+
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore

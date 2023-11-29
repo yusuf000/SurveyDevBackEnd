@@ -47,8 +47,6 @@ public class Project {
     @Column(name = Constants.projectType, nullable = false)
     private ProjectType projectType;
 
-    private Integer numberOfPhases;
-
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "project")
     @JsonIgnore
     private Set<Phase> phases;

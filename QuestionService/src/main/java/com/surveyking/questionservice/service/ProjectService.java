@@ -1,6 +1,6 @@
 package com.surveyking.questionservice.service;
 
-import com.surveyking.questionservice.model.ProjectType;
+import com.surveyking.questionservice.model.ProjectRequest;
 import com.surveyking.questionservice.model.entity.Phase;
 import com.surveyking.questionservice.model.entity.Project;
 import com.surveyking.questionservice.repository.ProjectRepository;
@@ -18,28 +18,25 @@ import java.util.Set;
 public class ProjectService {
     private final ProjectRepository projectRepository;
 
-    public boolean add(Project project, String userId) {
+    public boolean add(ProjectRequest projectRequest, String userId) {
+        Project project = Project.builder()
+                .name(projectRequest.getName())
+                .projectType(projectRequest.getProjectType())
+                .clientName(projectRequest.getClientName())
+                .startDate(projectRequest.getStartDate())
+                .endDate(projectRequest.getEndDate())
+                .status(projectRequest.getStatus())
+                .sasCode(projectRequest.getSasCode())
+                .jobNumber(projectRequest.getJobNumber())
+                .build();
         project.setOwner(userId);
         project.setMembers(Set.of(userId));
-        if (project.getProjectType() == ProjectType.MULTI_PHASE) {
-            Set<Phase> phases = new HashSet<>();
-            for (int i = 0; i < project.getNumberOfPhases(); i++) {
-                phases.add(Phase.builder()
-                        .project(project)
-                        .serial(i)
-                        .build()
-                );
-            }
-            project.setPhases(phases);
-        } else {
-            project.setPhases(Set.of(
-                            Phase.builder()
-                                    .project(project)
-                                    .serial(0)
-                                    .build()
-                    )
-            );
+        Set<Phase> phases = new HashSet<>();
+        for(Phase phase: projectRequest.getPhases()){
+            phase.setProject(project);
+            phases.add(phase);
         }
+        project.setPhases(phases);
         projectRepository.save(project);
         return true;
     }
