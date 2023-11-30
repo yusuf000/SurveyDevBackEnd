@@ -1,11 +1,13 @@
 package com.example.authenticationservice.authentication.service;
 
-import com.example.authenticationservice.authentication.model.*;
+import com.example.authenticationservice.authentication.model.AuthenticationResponse;
+import com.example.authenticationservice.authentication.model.Privilege;
+import com.example.authenticationservice.authentication.model.RegisterRequest;
+import com.example.authenticationservice.authentication.model.User;
 import com.example.authenticationservice.authentication.repository.RoleRepository;
 import com.example.authenticationservice.authentication.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +26,6 @@ public class AuthenticationService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
 
     public boolean register(RegisterRequest request) {
         var user = User.builder()
@@ -42,14 +43,9 @@ public class AuthenticationService {
 
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) throws Exception {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUserId(),
-                        request.getPassword()
-                )
-        );
-        var user = userRepository.findByUserId(request.getUserId())
+    public AuthenticationResponse generateJWT() throws Exception {
+
+        var user = userRepository.findByUserId(SecurityContextHolder.getContext().getAuthentication().getName())
                 .orElseThrow(() -> new Exception("User not registered"));
 
         List<String> authorities = user.getRoles().stream().flatMap(role -> role.getPrivileges().stream().map(Privilege::getName)).collect(Collectors.toList());
@@ -59,6 +55,5 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
-
     }
 }

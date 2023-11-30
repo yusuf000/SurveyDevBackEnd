@@ -1,6 +1,5 @@
 package com.example.authenticationservice.authentication.controller;
 
-import com.example.authenticationservice.authentication.model.AuthenticationRequest;
 import com.example.authenticationservice.authentication.model.AuthenticationResponse;
 import com.example.authenticationservice.authentication.model.RegisterRequest;
 import com.example.authenticationservice.authentication.service.AuthenticationService;
@@ -25,9 +24,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody AuthenticationRequest request
-    ) throws Exception {
-        return ResponseEntity.ok(service.authenticate(request));
+    public ResponseEntity<AuthenticationResponse> authenticate() throws Exception {
+        return ResponseEntity.ok(service.generateJWT());
     }
 }
