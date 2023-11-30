@@ -26,6 +26,7 @@ public class GatewayConfig {
                                 "/api/v1/choice-filter/**",
                                 "/api/v1/language/**",
                                 "/api/v1/project/**",
+                                "/api/v1/phase/**",
                                 "/api/v1/question/**",
                                 "/api/v1/question-filter/**",
                                 "/api/v1/question-type/**"

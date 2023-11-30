@@ -10,4 +10,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     Optional<Project> findProjectBySasCode(String code);
     Optional<List<Project>> findProjectByOwner(String owner);
     void deleteBySasCode(String code);
+
+    Optional<List<Project>> findProjectByOwnerAndStatus(String owner, String status);
 }

@@ -5,10 +5,7 @@ import com.surveyking.questionservice.constants.PrivilegeConstants;
 import com.surveyking.questionservice.model.Answer;
 import com.surveyking.questionservice.model.QuestionRequest;
 import com.surveyking.questionservice.model.entity.*;
-import com.surveyking.questionservice.repository.LanguageRepository;
-import com.surveyking.questionservice.repository.ProjectRepository;
-import com.surveyking.questionservice.repository.QuestionRepository;
-import com.surveyking.questionservice.repository.QuestionTypeRepository;
+import com.surveyking.questionservice.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +17,8 @@ public class QuestionService {
 
     private final QuestionRepository questionRepository;
     private final LanguageRepository languageRepository;
-    private final ProjectRepository projectRepository;
+    private final PhaseRepository phaseRepository;
+    private final ChoiceRepository choiceRepository;
     private final QuestionTypeRepository questionTypeRepository;
     private final SurveyServiceClient surveyServiceClient;
 
@@ -28,18 +26,18 @@ public class QuestionService {
         Optional<Language> language = languageRepository.findLanguageByCode(
                 request.getLanguageCode()
         );
-        Optional<Project> project = projectRepository.findProjectBySasCode(
-                request.getProjectSasCode()
+        Optional<Phase> phase = phaseRepository.findById(
+                request.getPhaseId()
         );
         Optional<QuestionType> questionType = questionTypeRepository.findQuestionTypeByName(
                 request.getQuestionType()
         );
-        if (language.isEmpty() || project.isEmpty() || questionType.isEmpty()) return false;
+        if (language.isEmpty() || phase.isEmpty() || questionType.isEmpty()) return false;
         Question question = Question.builder()
                 .serial(request.getSerial())
                 .language(language.get())
                 .questionType(questionType.get())
-                .project(project.get())
+                .phase(phase.get())
                 .description(request.getDescription())
                 .build();
         setQuestion(question, request.getChoices());
@@ -49,26 +47,26 @@ public class QuestionService {
     }
 
     public Boolean add(List<QuestionRequest> requests) {
-        if(requests == null || requests.isEmpty()) return true;
+        if (requests == null || requests.isEmpty()) return true;
 
         Optional<Language> language = languageRepository.findLanguageByCode(
                 requests.get(0).getLanguageCode()
         );
-        Optional<Project> project = projectRepository.findProjectBySasCode(
-                requests.get(0).getProjectSasCode()
+        Optional<Phase> phase = phaseRepository.findById(
+                requests.get(0).getPhaseId()
         );
         Optional<QuestionType> questionType = questionTypeRepository.findQuestionTypeByName(
                 requests.get(0).getQuestionType()
         );
-        if (language.isEmpty() || project.isEmpty() || questionType.isEmpty()) return false;
+        if (language.isEmpty() || phase.isEmpty() || questionType.isEmpty()) return false;
 
         List<Question> questions = new ArrayList<>();
-        for(QuestionRequest request: requests){
+        for (QuestionRequest request : requests) {
             Question question = Question.builder()
                     .serial(request.getSerial())
                     .language(language.get())
                     .questionType(questionType.get())
-                    .project(project.get())
+                    .phase(phase.get())
                     .description(request.getDescription())
                     .build();
             setQuestion(question, request.getChoices());
@@ -80,28 +78,29 @@ public class QuestionService {
     }
 
     private void setQuestion(Question question, List<Choice> choices) {
-        if(choices == null) return;
-        for(Choice choice: choices){
+        if (choices == null) return;
+        for (Choice choice : choices) {
             choice.setQuestion(question);
         }
         question.setChoices(new HashSet<>(choices));
     }
 
     private void setParent(Choice parent, Set<Choice> choices) {
-        if(choices == null || choices.isEmpty()) return;
+        if (choices == null || choices.isEmpty()) return;
 
-        for(Choice choice: choices){
+        for (Choice choice : choices) {
             choice.setParent(parent);
             setParent(choice, choice.getChoices());
         }
     }
 
-    public List<Question> get(String sasCode) {
-        Optional<Project> project = projectRepository.findProjectBySasCode(
-                sasCode
+    public List<Question> getByPhaseId(Long phaseId) {
+        Optional<Phase> phase = phaseRepository.findById(
+                phaseId
         );
-        if (project.isEmpty()) return Collections.emptyList();
-        return questionRepository.findAllByProject(project.get());
+        if (phase.isEmpty()) return Collections.emptyList();
+ //       return phase.get().getQuestions().stream().toList();
+        return null;
     }
 
     public boolean delete(Long questionId) {
@@ -109,53 +108,126 @@ public class QuestionService {
         return true;
     }
 
-    public Optional<Question> get(Long questionId) {
-        return questionRepository.findById(questionId);
+    public Question get(Long questionId) {
+        Optional<Question> question = questionRepository.findById(questionId);
+        if(question.isEmpty())return null;
+        return question.get();
     }
 
     public Question getNext(String userId, Long questionId) {
         Optional<Question> currentQuestion = questionRepository.findById(questionId);
-        if(currentQuestion.isEmpty()) return null;
+        if (currentQuestion.isEmpty()) return null;
 
-        Long nextSerial = currentQuestion.get().getSerial() + 1;
-        Optional<Question> nextQuestion = questionRepository.findBySerial(nextSerial);
-        if(nextQuestion.isEmpty()) return null;
-        if(nextQuestion.get().getQuestionFilter() == null) return nextQuestion.get();
+        List<Answer> answers = surveyServiceClient.getAllForUser(currentQuestion.get().getPhase().getProject().getSasCode(), userId, PrivilegeConstants.ANSWER_INFO).getBody();
 
-        List<Answer> answers = surveyServiceClient.getAllForUser(currentQuestion.get().getProject().getSasCode(), userId, PrivilegeConstants.ANSWER_INFO).getBody();
-        return findNextQuestion(nextQuestion.get(), answers);
-    }
-
-    private Question findNextQuestion(Question currentQuestion, List<Answer> answers) {
-        if(!skipQuestion(currentQuestion.getQuestionFilter(), answers)){
-            return currentQuestion;
-        }else{
-            Long nextSerial = currentQuestion.getSerial() + 1;
-            Optional<Question> nextQuestion = questionRepository.findBySerial(nextSerial);
-            if(nextQuestion.isEmpty()) return null;
-            if(nextQuestion.get().getQuestionFilter() == null) return nextQuestion.get();
-
-            return findNextQuestion(nextQuestion.get(), answers);
+        Question question = getQuestion(currentQuestion.get(), answers);
+        if (question != null) {
+            Set<Choice> choices = getChoices(question.getChoices(), answers);
+            return Question.builder()
+                    .id(question.getId())
+                    .serial(question.getSerial())
+                    .language(question.getLanguage())
+                    .questionType(question.getQuestionType())
+                    .description(question.getDescription())
+                    .choices(choices)
+                    .build();
         }
+        return null;
     }
 
-    private boolean skipQuestion(QuestionFilter questionFilter, List<Answer> answers) {
-        if(questionFilter == null) return false;
+    private Set<Choice> getChoices(Set<Choice> choices, List<Answer> answers) {
+        Set<Choice> finalChoices = new HashSet<>();
+        if(choices == null || choices.isEmpty()) return finalChoices;
+
+        for (Choice choice : choices) {
+            if (!skipChoice(choice.getChoiceFilters(), answers)) {
+                finalChoices.add(Choice.builder()
+                        .id(choice.getId())
+                        .serial(choice.getSerial())
+                        .value(choice.getValue())
+                        .choices(getChoices(choice.getChoices(), answers))
+                        .build());
+            }
+        }
+        return finalChoices;
+    }
+
+    private boolean skipChoice(ChoiceFilter choiceFilter, List<Answer> answers) {
+        if (choiceFilter == null) return false;
         boolean result = false;
-        for(Answer answer: answers){
+        for (Answer answer : answers) {
             if (
-                    answer.getChoiceId().longValue() == questionFilter.getChoiceIdToFilter().longValue()
-                            && answer.getId().getQuestionId().longValue() == questionFilter.getQuestionIdToFilter().longValue()
+                    checkChoiceFilter(answer, choiceFilter)
             ) {
                 result = true;
                 break;
             }
         }
-        if(questionFilter.getQuestionFilterToAnd() != null) result &= skipQuestion(questionFilter.getQuestionFilterToAnd(), answers);
+        if (choiceFilter.getChoiceFilterToAnd() != null)
+            result &= skipChoice(choiceFilter.getChoiceFilterToAnd(), answers);
 
-        for(QuestionFilter questionFilterOr: questionFilter.getQuestionFiltersToOr()){
+        for (ChoiceFilter choiceFilterOr : choiceFilter.getChoiceFiltersToOr()) {
+            result |= skipChoice(choiceFilterOr, answers);
+        }
+        return result;
+    }
+
+    private boolean checkChoiceFilter(Answer answer, ChoiceFilter choiceFilter) {
+        return checkFilter(answer, choiceFilter.getChoiceIdToFilter(), choiceFilter.getQuestionIdToFilter(), choiceFilter.getValueEqual(), choiceFilter.getValueSmaller(), choiceFilter.getValueGreater());
+    }
+
+    private Question getQuestion(Question currentQuestion, List<Answer> answers) {
+
+        Long nextSerial = currentQuestion.getSerial() + 1;
+        Optional<Question> nextQuestion = questionRepository.findBySerial(nextSerial);
+        if (nextQuestion.isEmpty()) return null;
+        if (nextQuestion.get().getQuestionFilter() == null) return nextQuestion.get();
+
+        return findNextQuestion(nextQuestion.get(), answers);
+    }
+
+    private Question findNextQuestion(Question currentQuestion, List<Answer> answers) {
+        if (!skipQuestion(currentQuestion.getQuestionFilter(), answers)) {
+            return currentQuestion;
+        } else {
+            return getQuestion(currentQuestion, answers);
+        }
+    }
+
+    private boolean skipQuestion(QuestionFilter questionFilter, List<Answer> answers) {
+        if (questionFilter == null) return false;
+        boolean result = false;
+        for (Answer answer : answers) {
+            if (
+                    checkQuestionFilter(answer, questionFilter)
+            ) {
+                result = true;
+                break;
+            }
+        }
+        if (questionFilter.getQuestionFilterToAnd() != null)
+            result &= skipQuestion(questionFilter.getQuestionFilterToAnd(), answers);
+
+        for (QuestionFilter questionFilterOr : questionFilter.getQuestionFiltersToOr()) {
             result |= skipQuestion(questionFilterOr, answers);
         }
         return result;
+    }
+
+    private boolean checkQuestionFilter(Answer answer, QuestionFilter questionFilter) {
+        return checkFilter(answer, questionFilter.getChoiceIdToFilter(), questionFilter.getQuestionIdToFilter(), questionFilter.getValueEqual(), questionFilter.getValueSmaller(), questionFilter.getValueGreater());
+    }
+
+    private boolean checkFilter(Answer answer, Long choiceIdToFilter, Long questionIdToFilter, String valueEqual, String valueSmaller, String valueGreater) {
+        if (answer.getChoiceId().longValue() == choiceIdToFilter.longValue()
+                && answer.getId().getQuestionId().longValue() == questionIdToFilter.longValue()) {
+            Optional<Choice> choice = choiceRepository.findById(choiceIdToFilter);
+            if (choice.isPresent()) {
+                return (valueEqual == null || valueEqual.equals(choice.get().getValue()))
+                        && (valueSmaller == null || Double.parseDouble(valueSmaller) > Double.parseDouble(choice.get().getValue()))
+                        && (valueSmaller == null || Double.parseDouble(valueGreater) < Double.parseDouble(choice.get().getValue()));
+            }
+        }
+        return false;
     }
 }

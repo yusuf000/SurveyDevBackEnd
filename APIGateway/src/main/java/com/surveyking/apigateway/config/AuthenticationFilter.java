@@ -24,17 +24,22 @@ public class AuthenticationFilter implements GatewayFilter {
 
         if (routerValidator.isSecured.test(request)) {
             if (this.isAuthMissing(request)) {
-                return this.onError(exchange, HttpStatus.UNAUTHORIZED);
+                return onError(exchange, HttpStatus.UNAUTHORIZED);
             }
 
             final String authHeader = getAuthHeader(request);
             final String jwt = authHeader.substring(7);
 
-            if (jwtUtil.isInvalid(jwt)) {
-                return this.onError(exchange, HttpStatus.FORBIDDEN);
+            try {
+                if (jwtUtil.isInvalid(jwt)) {
+                    return onError(exchange, HttpStatus.FORBIDDEN);
+                }else{
+                    updateRequest(exchange, jwt);
+                }
+            } catch (Exception e) {
+                return onError(exchange, HttpStatus.FORBIDDEN);
             }
 
-            this.updateRequest(exchange, jwt);
         }
         return chain.filter(exchange);
     }
@@ -53,10 +58,10 @@ public class AuthenticationFilter implements GatewayFilter {
         return !request.getHeaders().containsKey("Authorization");
     }
 
-    private void updateRequest(ServerWebExchange exchange, String token) {
-        exchange.getRequest().mutate()
-                .header("userId", String.valueOf(jwtUtil.extractUserId(token)))
-                .header("authorities", jwtUtil.extractUserAuthorities(token))
-                .build();
+    private void updateRequest(ServerWebExchange exchange, String token) throws Exception {
+            exchange.getRequest().mutate()
+                    .header("userId", String.valueOf(jwtUtil.extractUserId(token)))
+                    .header("authorities", jwtUtil.extractUserAuthorities(token))
+                    .build();
     }
 }

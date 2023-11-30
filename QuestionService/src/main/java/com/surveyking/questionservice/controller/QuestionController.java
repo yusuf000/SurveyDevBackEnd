@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/api/v1/question")
@@ -20,7 +19,7 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @PostMapping("/add")
-    @PreAuthorize("hasAuthority(@Privilege.QUESTION_CREATE)" + "&& @ownershipCheckService.checkProjectMembershipFromQuestionRequest(#request, #userId)")
+    @PreAuthorize("hasAuthority(@Privilege.QUESTION_CREATE)" + "&& @ownershipCheckService.checkProjectMembershipFromPhaseId(#request.phaseId, #userId)")
     public Mono<ResponseEntity<Boolean>> add(
             @RequestBody QuestionRequest request,
             @RequestHeader(value = "userId") String userId
@@ -47,17 +46,17 @@ public class QuestionController {
     }
 
     @GetMapping("")
-    @PreAuthorize("hasAuthority(@Privilege.QUESTION_INFO)" + "&& @ownershipCheckService.checkProjectMembershipFromSasCode(#sasCode, #userId)")
-    public Mono<ResponseEntity<List<Question>>> get(
-            @RequestParam("sasCode") String sasCode,
+    @PreAuthorize("hasAuthority(@Privilege.QUESTION_INFO)" + "&& @ownershipCheckService.checkProjectMembershipFromPhaseId(#phaseId, #userId)")
+    public Mono<ResponseEntity<List<Question>>> getByPhaseId(
+            @RequestParam("phaseId") Long phaseId,
             @RequestHeader(value = "userId") String userId
     ) {
-        return Mono.just(ResponseEntity.ok(questionService.get(sasCode)));
+        return Mono.just(ResponseEntity.ok(questionService.getByPhaseId(phaseId)));
     }
 
     @GetMapping(value = "", params = "questionId")
     @PreAuthorize("hasAuthority(@Privilege.QUESTION_INFO)" + "&& @ownershipCheckService.checkProjectMembershipFromQuestionId(#questionId, #userId)")
-    public Mono<ResponseEntity<Optional<Question>>> get(
+    public Mono<ResponseEntity<Question>> getByQuestionId(
             @RequestParam("questionId") Long questionId,
             @RequestHeader(value = "userId") String userId
     ) {

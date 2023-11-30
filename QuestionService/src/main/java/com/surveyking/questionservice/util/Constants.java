@@ -7,5 +7,5 @@ public class Constants {
     public static final String endDate = "end_date";
     public static final String sasCode = "sas_code";
     public static final String jobNumber = "job_number";
-
+    public static final String projectType = "project_type";
 }

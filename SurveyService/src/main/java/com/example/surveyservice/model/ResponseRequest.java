@@ -1,15 +1,18 @@
 package com.example.surveyservice.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AnswerRequest {
+public class ResponseRequest {
     private Long questionId;
     private String sasCode;
     private Long choiceId;
+    private Long serial;
     private String description;
 }

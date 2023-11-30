@@ -2,22 +2,26 @@ package com.example.surveyservice.model.entity;
 
 import com.example.surveyservice.model.AnswerId;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Reference;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
 
-@RedisHash(value = "Answer", timeToLive = 30 * 60L)
-@Data
+import java.util.Set;
+
+@RedisHash(value = "Response", timeToLive = 24 * 60 * 60L)
+@Getter
+@Setter
 @Builder
-public class AnswerCache {
+public class ResponseCache {
     @Id
     private AnswerId id;
 
     @Indexed
     private String sasCode;
 
-    private Long choiceId;
-
-    private String description;
+    @Reference
+    private Set<Answer> answers;
 }

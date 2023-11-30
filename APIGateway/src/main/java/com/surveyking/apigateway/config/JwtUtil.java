@@ -25,15 +25,15 @@ public class JwtUtil {
         this.key = getSignInKey();
     }
 
-    public String extractUserId(String token) {
+    public String extractUserId(String token) throws Exception{
         return extractClaim(token, Claims::getSubject);
     }
 
-    private Date extractExpirationDate(String token) {
+    private Date extractExpirationDate(String token) throws Exception{
         return extractClaim(token, Claims::getExpiration);
     }
 
-    public String extractUserAuthorities(String token) {
+    public String extractUserAuthorities(String token) throws Exception{
         final Claims claims = extractAllClaims(token);
         if (claims.get("authorities") == null) return "";
         StringBuilder authsBuilder = new StringBuilder(claims.get("authorities").toString());
@@ -42,12 +42,12 @@ public class JwtUtil {
         return authsBuilder.toString();
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) throws Exception {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
-    private Claims extractAllClaims(String token) {
+    private Claims extractAllClaims(String token) throws Exception{
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
@@ -55,12 +55,12 @@ public class JwtUtil {
                 .getBody();
     }
 
-    private boolean isTokenExpired(String token) {
+    private boolean isTokenExpired(String token) throws Exception{
         Date expirationDate = extractExpirationDate(token);
         return expirationDate.before(new Date());
     }
 
-    public boolean isInvalid(String token) {
+    public boolean isInvalid(String token) throws Exception{
         return isTokenExpired(token);
     }
 
