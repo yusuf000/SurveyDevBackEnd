@@ -32,7 +32,7 @@ public class ProjectService {
         project.setOwner(userId);
         project.setMembers(Set.of(userId));
         Set<Phase> phases = new HashSet<>();
-        if (projectRequest.getPhases() == null || project.getPhases().isEmpty()) {
+        if (projectRequest.getPhases() == null || projectRequest.getPhases().isEmpty()) {
             phases.add(Phase.builder()
                     .serial(0)
                     .name(project.getName())
