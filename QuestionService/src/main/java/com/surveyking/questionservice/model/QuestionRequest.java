@@ -11,7 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QuestionRequest {
-    private Long serial;
     private String languageCode;
     private String questionType;
     private Long phaseId;
