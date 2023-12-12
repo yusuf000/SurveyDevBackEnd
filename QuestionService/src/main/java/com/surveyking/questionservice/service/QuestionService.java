@@ -34,7 +34,7 @@ public class QuestionService {
         );
         if (language.isEmpty() || phase.isEmpty() || questionType.isEmpty()) return false;
 
-        Long serial = questionRepository.findMaxSerial();
+        Long serial = questionRepository.findMaxSerial(request.getPhaseId());
         if(serial == null) serial = 0L;
         else serial++;
 
@@ -67,9 +67,9 @@ public class QuestionService {
 
         List<Question> questions = new ArrayList<>();
 
-        Long serial = questionRepository.findMaxSerial();
+        Long serial = questionRepository.findMaxSerial(requests.get(0).getPhaseId());
         if(serial == null) serial = 0L;
-        else serial++;
+        serial++;
 
         for (QuestionRequest request : requests) {
             Question question = Question.builder()
@@ -110,8 +110,7 @@ public class QuestionService {
                 phaseId
         );
         if (phase.isEmpty()) return Collections.emptyList();
- //       return phase.get().getQuestions().stream().toList();
-        return null;
+        return phase.get().getQuestions().stream().toList();
     }
 
     public boolean delete(Long questionId) {
