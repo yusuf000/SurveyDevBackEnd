@@ -26,11 +26,10 @@ public class QuestionFilterController {
     @PostMapping("/add-expression")
     @PreAuthorize("hasAuthority(@Privilege.QUESTION_CREATE)" + "&& @ownershipCheckService.checkProjectMembershipFromQuestionId(#request.questionId, #userId)")
     public Mono<ResponseEntity<Boolean>> addExpression(
-            @RequestParam Long questionId,
-            @RequestParam String expression,
+            @RequestBody QuestionFilterRequest request,
             @RequestHeader("userId") String userId
     ){
-        return Mono.just(ResponseEntity.ok(questionFilterService.add(questionId, expression)));
+        return Mono.just(ResponseEntity.ok(questionFilterService.add(request.getQuestionId(), request.getExpression())));
     }
 
     @PostMapping("/delete")

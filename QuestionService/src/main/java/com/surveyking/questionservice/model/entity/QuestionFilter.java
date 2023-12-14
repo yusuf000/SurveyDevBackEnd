@@ -22,10 +22,8 @@ public class QuestionFilter {
     @OneToOne
     private Question question;
 
-    @Column(nullable = false)
     private Long questionIdToFilter;
 
-    @Column(nullable = false)
     private Long choiceIdToFilter;
 
     private String valueEqual;

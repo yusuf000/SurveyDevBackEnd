@@ -228,6 +228,7 @@ public class QuestionService {
     }
 
     private boolean checkFilter(Answer answer, Long choiceIdToFilter, Long questionIdToFilter, String valueEqual, String valueSmaller, String valueGreater) {
+        if(choiceIdToFilter == null || questionIdToFilter == null) return true;
         if (answer.getChoiceId().longValue() == choiceIdToFilter.longValue()
                 && answer.getId().getQuestionId().longValue() == questionIdToFilter.longValue()) {
             Optional<Choice> choice = choiceRepository.findById(choiceIdToFilter);

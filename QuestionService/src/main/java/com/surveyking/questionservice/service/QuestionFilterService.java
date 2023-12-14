@@ -1,5 +1,6 @@
 package com.surveyking.questionservice.service;
 
+import com.surveyking.questionservice.exceptions.InvalidExpressionException;
 import com.surveyking.questionservice.model.QuestionFilterRequest;
 import com.surveyking.questionservice.model.entity.QuestionFilter;
 import com.surveyking.questionservice.model.entity.Question;
@@ -7,11 +8,11 @@ import com.surveyking.questionservice.repository.QuestionFilterRepository;
 import com.surveyking.questionservice.repository.QuestionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -47,103 +48,78 @@ public class QuestionFilterService {
 
 
     public Boolean add(long questionId, String expression) {
-        QuestionFilter questionFilter = getQuestionFilter(0, expression.length() - 1, expression);
-        if (questionFilter != null) {
+        try {
+            QuestionFilter questionFilter = getQuestionFilter(0,  expression, null).getSecond();
             Optional<Question> question = questionRepository.findById(questionId);
             if (question.isEmpty()) return false;
             else {
                 questionFilter.setQuestion(question.get());
-                questionFilterRepository.save(questionFilter);
+                //questionFilterRepository.save(questionFilter);
                 return true;
             }
-        } else {
+        }catch (InvalidExpressionException e){
             return false;
         }
     }
 
-    //q1c1 && q2c2 || q3c3
-    //((q1c1 && q2c2) || q3c3)
-    private QuestionFilter getQuestionFilter(int st, int en, String expression) {
-        /*if(expression.charAt(st) == '('){
-
-        }
-        Long qId = 0L;
-        Long cId = 0L;
+    private Pair<Integer, QuestionFilter> getQuestionFilter(int st, String expression, QuestionFilter parentQuestionFilter) throws InvalidExpressionException{
+        QuestionFilter currentQuestionFilter;
         int i = st;
-        while (i <= en && (expression.charAt(i) >= '0' && expression.charAt(i) <= '9')) {
+        Pair<Integer, QuestionFilter> response;
+        if(expression.charAt(i) == '('){
+            response = getQuestionFilter(i + 1, expression,null);
+            currentQuestionFilter = QuestionFilter.builder()
+                    .questionFiltersToOr(new HashSet<>())
+                    .build();
+            currentQuestionFilter.getQuestionFiltersToOr().add(response.getSecond());
+        }
+        else{
+            response = createQuestionFilter(i, expression);
+            currentQuestionFilter = response.getSecond();
+        }
+        i = response.getFirst();
+
+        if(i < expression.length()){
+            if(parentQuestionFilter == null) parentQuestionFilter = currentQuestionFilter;
+            if (expression.charAt(i) == '&') {
+                Pair<Integer, QuestionFilter> res = getQuestionFilter(i + 1, expression, parentQuestionFilter);
+                i = res.getFirst();
+                currentQuestionFilter.setQuestionFilterToAnd(res.getSecond());
+            } else if (expression.charAt(i) == '|') {
+                Pair<Integer, QuestionFilter> res = getQuestionFilter(i + 1, expression, parentQuestionFilter);
+                i = res.getFirst();
+                parentQuestionFilter.getQuestionFiltersToOr().add(res.getSecond());
+            }else if(expression.charAt(i) == ')'){
+                i++;
+            }else{
+                throw new InvalidExpressionException("Invalid expression");
+            }
+        }
+
+
+        return Pair.of(i, currentQuestionFilter);
+    }
+
+    private Pair<Integer, QuestionFilter> createQuestionFilter(int st, String expression) throws InvalidExpressionException {
+        long qId = 0L;
+        long cId = 0L;
+        if(expression.charAt(st) != 'Q') throw new InvalidExpressionException("Invalid expression");
+        int i = st + 1;
+        while (i < expression.length() && (expression.charAt(i) >= '0' && expression.charAt(i) <= '9')) {
             qId = qId * 10L + (expression.charAt(i) - '0');
             i++;
         }
-        if (expression.charAt(i) != 'C') return null;
+        if (expression.charAt(i) != 'C') throw new InvalidExpressionException("Invalid expression");
         i++;
-        while (i <= en && (expression.charAt(i) >= '0' && expression.charAt(i) <= '9')) {
+        while (i < expression.length() && (expression.charAt(i) >= '0' && expression.charAt(i) <= '9')) {
             cId = cId * 10L + (expression.charAt(i) - '0');
             i++;
         }
-        QuestionFilter questionFilter;
-        if(expression.charAt(i) == ')'){
-            questionFilter = QuestionFilter.builder()
-                    .choiceIdToFilter(cId)
-                    .questionIdToFilter(qId)
-                    .build();
-        }else if (expression.charAt(i) == '&'){
-            questionFilter = QuestionFilter.builder()
-                    .choiceIdToFilter(cId)
-                    .questionIdToFilter(qId)
-                    .questionFilterToAnd(getQuestionFilter(i + 1, en, expression))
-                    .build();
-        }else if (expression.charAt(i) == '|'){
-            questionFilter = QuestionFilter.builder()
-                    .choiceIdToFilter(cId)
-                    .questionIdToFilter(qId)
-                    .questionFiltersToOr(Set.of(getQuestionFilter(i + 1, en, expression)))
-                    .build();
-        }*/
-        return null;
+        return Pair.of(i, QuestionFilter.builder()
+                .choiceIdToFilter(cId)
+                .questionIdToFilter(qId)
+                .questionFiltersToOr(new HashSet<>())
+                .build());
     }
 }
 
-        /*int i = st;
-        while (i <= en) {
-            if (expression.charAt(i) == '(') {
-                int cnt = 1;
-                int nSt = i + 1;
-                int nEn = -1;
-                for (int j = i + 1; j <= en; j++) {
-                    if (expression.charAt(i) == '(') {
-                        cnt++;
-                    } else if (expression.charAt(i) == ')') {
-                        cnt--;
-                    }
-                    if (cnt == 0) {
-                        nEn = j - 1;
-                        break;
-                    }
-                }
-                if (cnt != 0) return null;
-                else {
-                    QuestionFilter q = getQuestionFilter(nSt, nEn, expression);
-                    i = nEn + 1;
-                }
-            } else if (expression.charAt(i) == 'Q') {
-                Long qId = 0L;
-                Long cId = 0L;
-                while (i <= en && (expression.charAt(i) >= '0' && expression.charAt(i) <= '9')) {
-                    qId = qId * 10L + (expression.charAt(i) - '0');
-                    i++;
-                }
-                if (expression.charAt(i) != 'C') return null;
-                i++;
-                while (i <= en && (expression.charAt(i) >= '0' && expression.charAt(i) <= '9')) {
-                    cId = cId * 10L + (expression.charAt(i) - '0');
-                    i++;
-                }
-                if()
-                QuestionFilter questionFilter = QuestionFilter.builder()
-                        .questionIdToFilter(qId)
-                        .choiceIdToFilter(cId)
-                        .build();
-            } else {
-                return null;
-            }
-          }*/
