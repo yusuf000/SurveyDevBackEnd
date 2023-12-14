@@ -54,7 +54,7 @@ public class QuestionFilterService {
             if (question.isEmpty()) return false;
             else {
                 questionFilter.setQuestion(question.get());
-                //questionFilterRepository.save(questionFilter);
+                questionFilterRepository.save(questionFilter);
                 return true;
             }
         }catch (InvalidExpressionException e){
