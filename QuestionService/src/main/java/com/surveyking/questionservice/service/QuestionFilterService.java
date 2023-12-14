@@ -47,12 +47,14 @@ public class QuestionFilterService {
     }
 
 
+    @Transactional
     public Boolean add(long questionId, String expression) {
         try {
             QuestionFilter questionFilter = getQuestionFilter(0,  expression, null).getSecond();
             Optional<Question> question = questionRepository.findById(questionId);
             if (question.isEmpty()) return false;
             else {
+                questionFilterRepository.deleteByQuestion(question.get());
                 questionFilter.setQuestion(question.get());
                 questionFilterRepository.save(questionFilter);
                 return true;
