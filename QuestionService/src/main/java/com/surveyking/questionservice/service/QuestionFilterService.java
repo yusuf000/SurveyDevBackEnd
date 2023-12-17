@@ -2,11 +2,10 @@ package com.surveyking.questionservice.service;
 
 import com.surveyking.questionservice.exceptions.InvalidExpressionException;
 import com.surveyking.questionservice.model.QuestionFilterRequest;
-import com.surveyking.questionservice.model.entity.QuestionFilter;
 import com.surveyking.questionservice.model.entity.Question;
+import com.surveyking.questionservice.model.entity.QuestionFilter;
 import com.surveyking.questionservice.repository.QuestionFilterRepository;
 import com.surveyking.questionservice.repository.QuestionRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -38,7 +37,6 @@ public class QuestionFilterService {
     }
 
 
-    @Transactional
     public boolean delete(Long questionId) {
         Optional<Question> question = questionRepository.findById(questionId);
         if (question.isEmpty()) return false;
@@ -47,7 +45,6 @@ public class QuestionFilterService {
     }
 
 
-    @Transactional
     public Boolean add(long questionId, String expression) {
         try {
             QuestionFilter questionFilter = getQuestionFilter(0,  expression, null).getSecond();
@@ -56,6 +53,7 @@ public class QuestionFilterService {
             else {
                 questionFilterRepository.deleteByQuestion(question.get());
                 questionFilter.setQuestion(question.get());
+                setParent(questionFilter);
                 questionFilterRepository.save(questionFilter);
                 return true;
             }
