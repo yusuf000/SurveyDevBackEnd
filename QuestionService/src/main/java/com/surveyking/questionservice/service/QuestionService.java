@@ -224,7 +224,7 @@ public class QuestionService {
     }
 
     private boolean checkQuestionFilter(Answer answer, QuestionFilter questionFilter) {
-        return checkFilter(answer, questionFilter.getChoiceIdToFilter(), questionFilter.getQuestionIdToFilter(), questionFilter.getValueEqual(), questionFilter.getValueSmaller(), questionFilter.getValueGreater());
+        return checkFilter(answer, questionFilter.getChoiceToFilter().getId(), questionFilter.getQuestionToFilter().getId(), questionFilter.getValueEqual(), questionFilter.getValueSmaller(), questionFilter.getValueGreater());
     }
 
     private boolean checkFilter(Answer answer, Long choiceIdToFilter, Long questionIdToFilter, String valueEqual, String valueSmaller, String valueGreater) {

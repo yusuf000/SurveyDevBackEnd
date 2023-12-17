@@ -22,9 +22,11 @@ public class QuestionFilter {
     @OneToOne
     private Question question;
 
-    private Long questionIdToFilter;
+    @OneToOne
+    private Question questionToFilter;
 
-    private Long choiceIdToFilter;
+    @OneToOne
+    private Choice choiceToFilter;
 
     private String valueEqual;
     private String valueGreater;

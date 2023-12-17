@@ -2,8 +2,10 @@ package com.surveyking.questionservice.service;
 
 import com.surveyking.questionservice.exceptions.InvalidExpressionException;
 import com.surveyking.questionservice.model.QuestionFilterRequest;
+import com.surveyking.questionservice.model.entity.Choice;
 import com.surveyking.questionservice.model.entity.Question;
 import com.surveyking.questionservice.model.entity.QuestionFilter;
+import com.surveyking.questionservice.repository.ChoiceRepository;
 import com.surveyking.questionservice.repository.QuestionFilterRepository;
 import com.surveyking.questionservice.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,15 +20,7 @@ import java.util.Optional;
 public class QuestionFilterService {
     private final QuestionFilterRepository questionFilterRepository;
     private final QuestionRepository questionRepository;
-
-    public boolean add(QuestionFilterRequest request) {
-        Optional<Question> question = questionRepository.findById(request.getQuestionId());
-        if (question.isEmpty() || question.get().getQuestionFilter() != null) return false;
-        request.getQuestionFilter().setQuestion(question.get());
-        setParent(request.getQuestionFilter());
-        questionFilterRepository.save(request.getQuestionFilter());
-        return true;
-    }
+    private final ChoiceRepository choiceRepository;
 
     private void setParent(QuestionFilter questionFilter) {
         if (questionFilter.getQuestionFiltersToOr() == null) return;
@@ -117,9 +111,12 @@ public class QuestionFilterService {
             cId = cId * 10L + (expression.charAt(i) - '0');
             i++;
         }
+        Optional<Question> questionToFilter = questionRepository.findById(qId);
+        Optional<Choice> choiceToFilter = choiceRepository.findById(cId);
+        if(questionToFilter.isEmpty() || choiceToFilter.isEmpty())  throw new InvalidExpressionException("Invalid expression");
         return Pair.of(i, QuestionFilter.builder()
-                .choiceIdToFilter(cId)
-                .questionIdToFilter(qId)
+                .choiceToFilter(choiceToFilter.get())
+                .questionToFilter(questionToFilter.get())
                 .questionFiltersToOr(new HashSet<>())
                 .build());
     }

@@ -14,14 +14,6 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class QuestionFilterController {
     private final QuestionFilterService questionFilterService;
-    @PostMapping("/add")
-    @PreAuthorize("hasAuthority(@Privilege.QUESTION_CREATE)" + "&& @ownershipCheckService.checkProjectMembershipFromQuestionId(#request.questionId, #userId)")
-    public Mono<ResponseEntity<Boolean>> add(
-            @RequestBody QuestionFilterRequest request,
-            @RequestHeader("userId") String userId
-    ){
-        return Mono.just(ResponseEntity.ok(questionFilterService.add(request)));
-    }
 
     @PostMapping("/add-expression")
     @PreAuthorize("hasAuthority(@Privilege.QUESTION_CREATE)" + "&& @ownershipCheckService.checkProjectMembershipFromQuestionId(#request.questionId, #userId)")
@@ -34,7 +26,7 @@ public class QuestionFilterController {
 
     @PostMapping("/delete")
     @PreAuthorize("hasAuthority(@Privilege.QUESTION_DELETE)" + "&& @ownershipCheckService.checkProjectMembershipFromQuestionId(#questionId, #userId)")
-    public ResponseEntity<Boolean> add(
+    public ResponseEntity<Boolean> delete(
             @RequestParam Long questionId,
             @RequestHeader("userId") String userId
     ){
