@@ -11,5 +11,6 @@ import lombok.*;
 public class QuestionFilterRequest {
     Long questionId;
     QuestionFilter questionFilter;
-    String expression;
+    String expressionToEvaluate;
+    String expressionToShow;
 }

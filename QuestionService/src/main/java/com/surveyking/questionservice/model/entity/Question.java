@@ -36,6 +36,9 @@ public class Question {
     @Column(nullable = false, length = 1000)
     private String description;
 
+    @Column
+    private String questionFilterExpression;
+
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "question")
     private Set<Choice> choices;
 

@@ -29,7 +29,7 @@ public class QuestionFilterController {
             @RequestBody QuestionFilterRequest request,
             @RequestHeader("userId") String userId
     ){
-        return Mono.just(ResponseEntity.ok(questionFilterService.add(request.getQuestionId(), request.getExpression())));
+        return Mono.just(ResponseEntity.ok(questionFilterService.add(request.getQuestionId(), request.getExpressionToEvaluate(), request.getExpressionToShow())));
     }
 
     @PostMapping("/delete")

@@ -45,9 +45,9 @@ public class QuestionFilterService {
     }
 
 
-    public Boolean add(long questionId, String expression) {
+    public Boolean add(long questionId, String expressionToEvaluate, String expressionToShow) {
         try {
-            QuestionFilter questionFilter = getQuestionFilter(0,  expression, null).getSecond();
+            QuestionFilter questionFilter = getQuestionFilter(0,  expressionToEvaluate, null).getSecond();
             Optional<Question> question = questionRepository.findById(questionId);
             if (question.isEmpty()) return false;
             else {
@@ -55,6 +55,8 @@ public class QuestionFilterService {
                 questionFilter.setQuestion(question.get());
                 setParent(questionFilter);
                 questionFilterRepository.save(questionFilter);
+                question.get().setQuestionFilterExpression(expressionToShow);
+                questionRepository.save(question.get());
                 return true;
             }
         }catch (InvalidExpressionException e){
