@@ -22,10 +22,10 @@ public class QuestionFilter {
     @OneToOne
     private Question question;
 
-    @OneToOne
+    @ManyToOne
     private Question questionToFilter;
 
-    @OneToOne
+    @ManyToOne
     private Choice choiceToFilter;
 
     private String valueEqual;

@@ -1,6 +1,5 @@
 package com.surveyking.questionservice.model;
 
-import com.surveyking.questionservice.model.entity.QuestionFilter;
 import lombok.*;
 
 @Getter
@@ -10,7 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 public class QuestionFilterRequest {
     Long questionId;
-    QuestionFilter questionFilter;
     String expressionToEvaluate;
     String expressionToShow;
 }

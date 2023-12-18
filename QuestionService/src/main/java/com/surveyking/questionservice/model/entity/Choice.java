@@ -35,6 +35,9 @@ public class Choice {
     @JsonIgnore
     private Choice parent;
 
+    @Column
+    private String choiceFilterExpression;
+
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "parent")
     private Set<Choice> choices;
 

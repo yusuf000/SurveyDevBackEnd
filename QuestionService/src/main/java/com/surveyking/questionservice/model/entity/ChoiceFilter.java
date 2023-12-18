@@ -23,11 +23,11 @@ public class ChoiceFilter {
     @JsonIgnore
     private Choice choice;
 
-    @Column(nullable = false)
-    private Long questionIdToFilter;
+    @ManyToOne
+    private Question questionToFilter;
 
-    @Column(nullable = false)
-    private Long choiceIdToFilter;
+    @ManyToOne
+    private Choice choiceToFilter;
 
     private String valueEqual;
     private String valueGreater;

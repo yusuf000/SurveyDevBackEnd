@@ -182,7 +182,7 @@ public class QuestionService {
     }
 
     private boolean checkChoiceFilter(Answer answer, ChoiceFilter choiceFilter) {
-        return checkFilter(answer, choiceFilter.getChoiceIdToFilter(), choiceFilter.getQuestionIdToFilter(), choiceFilter.getValueEqual(), choiceFilter.getValueSmaller(), choiceFilter.getValueGreater());
+        return checkFilter(answer, choiceFilter.getChoiceToFilter().getId(), choiceFilter.getQuestionToFilter().getId(), choiceFilter.getValueEqual(), choiceFilter.getValueSmaller(), choiceFilter.getValueGreater());
     }
 
     private Question getQuestion(Question currentQuestion, List<Answer> answers) {

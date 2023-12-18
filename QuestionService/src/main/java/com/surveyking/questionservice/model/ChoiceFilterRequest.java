@@ -1,6 +1,5 @@
 package com.surveyking.questionservice.model;
 
-import com.surveyking.questionservice.model.entity.ChoiceFilter;
 import lombok.*;
 
 @Getter
@@ -10,5 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 public class ChoiceFilterRequest {
     Long choiceId;
-    ChoiceFilter choiceFilter;
+    String expressionToEvaluate;
+    String expressionToShow;
 }

@@ -1,7 +1,6 @@
 package com.surveyking.questionservice.service;
 
 import com.surveyking.questionservice.exceptions.InvalidExpressionException;
-import com.surveyking.questionservice.model.QuestionFilterRequest;
 import com.surveyking.questionservice.model.entity.Choice;
 import com.surveyking.questionservice.model.entity.Question;
 import com.surveyking.questionservice.model.entity.QuestionFilter;
@@ -35,6 +34,8 @@ public class QuestionFilterService {
         Optional<Question> question = questionRepository.findById(questionId);
         if (question.isEmpty()) return false;
         questionFilterRepository.deleteByQuestion(question.get());
+        question.get().setQuestionFilterExpression("");
+        questionRepository.save(question.get());
         return true;
     }
 
