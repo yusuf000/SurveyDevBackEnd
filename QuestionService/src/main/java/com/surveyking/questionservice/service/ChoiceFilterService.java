@@ -27,13 +27,15 @@ public class ChoiceFilterService {
         if(choice.isEmpty() || request.getExpressionToEvaluate() == null) return false;
         try {
             ChoiceFilter choiceFilter = getChoiceFilter(0,request.getExpressionToEvaluate(), null).getSecond();
+            saveChoiceFilter(choice.get(), choiceFilter);
+            choice.get().setChoiceFilterExpression(request.getExpressionToShow());
+
             if(choice.get().getChoices() != null && choice.get().getChoices().size() != 0){
                 for(Choice subChoices: choice.get().getChoices()){
-                    saveChoiceFilter(subChoices, choiceFilter, request.getExpressionToShow());
+                    subChoices.setChoiceFilterExpression(request.getExpressionToShow());
                 }
-            }else{
-                saveChoiceFilter(choice.get(), choiceFilter, request.getExpressionToShow());
             }
+            choiceRepository.save(choice.get());
         } catch (InvalidExpressionException e) {
             e.printStackTrace();
             return false;
@@ -41,13 +43,11 @@ public class ChoiceFilterService {
         return true;
     }
 
-    private void saveChoiceFilter(Choice choice, ChoiceFilter choiceFilter, String expressionToShow) {
+    private void saveChoiceFilter(Choice choice, ChoiceFilter choiceFilter) {
         choiceFilterRepository.deleteByChoice(choice);
         choiceFilter.setChoice(choice);
         setParent(choiceFilter);
         choiceFilterRepository.save(choiceFilter);
-        choice.setChoiceFilterExpression(expressionToShow);
-        choiceRepository.save(choice);
     }
 
     private void setParent(ChoiceFilter choiceFilter) {
