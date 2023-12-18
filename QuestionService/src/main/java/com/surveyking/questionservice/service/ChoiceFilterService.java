@@ -126,6 +126,8 @@ public class ChoiceFilterService {
         Optional<Choice> choice = choiceRepository.findById(choiceId);
         if(choice.isEmpty()) return false;
         choiceFilterRepository.deleteByChoice(choice.get());
+        choice.get().setChoiceFilterExpression("");
+        choiceRepository.save(choice.get());
         return true;
     }
 }
