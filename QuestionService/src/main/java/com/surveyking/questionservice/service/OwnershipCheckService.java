@@ -74,7 +74,13 @@ public class OwnershipCheckService {
         Optional<Choice> choice = choiceRepository.findById(choiceId);
         if(choice.isEmpty()) return false;
         else{
-            return choice.get().getQuestion().getPhase().getProject().getMembers().contains(userId);
+            Choice parentChoice = findParentChoice(choice.get());
+            return parentChoice.getQuestion().getPhase().getProject().getMembers().contains(userId);
         }
+    }
+
+    private Choice findParentChoice(Choice choice){
+        if(choice.getParent() == null) return choice;
+        else return findParentChoice(choice.getParent());
     }
 }

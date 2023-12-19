@@ -24,6 +24,7 @@ public class ChoiceFilterController {
         return Mono.just(ResponseEntity.ok(choiceFilterService.add(request)));
     }
 
+
     @PostMapping("/delete")
     @PreAuthorize("hasAuthority(@Privilege.CHOICE_DELETE)" + "&& @ownershipCheckService.checkProjectMembershipFromChoiceId(#choiceId, #userId)")
     public ResponseEntity<Boolean> add(

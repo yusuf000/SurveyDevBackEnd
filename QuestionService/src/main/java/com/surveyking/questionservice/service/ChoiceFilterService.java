@@ -126,8 +126,15 @@ public class ChoiceFilterService {
         Optional<Choice> choice = choiceRepository.findById(choiceId);
         if(choice.isEmpty()) return false;
         choiceFilterRepository.deleteByChoice(choice.get());
-        choice.get().setChoiceFilterExpression("");
+        clearChoiceExpression(choice.get());
         choiceRepository.save(choice.get());
         return true;
+    }
+
+    private void clearChoiceExpression(Choice choice) {
+        choice.setChoiceFilterExpression("");
+        for(Choice subChoice: choice.getChoices()){
+            clearChoiceExpression(subChoice);
+        }
     }
 }
