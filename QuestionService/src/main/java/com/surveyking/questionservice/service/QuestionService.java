@@ -113,6 +113,15 @@ public class QuestionService {
         return phase.get().getQuestions().stream().toList();
     }
 
+    public Question startPhase(Long phaseId) {
+        Optional<Phase> phase = phaseRepository.findById(
+                phaseId
+        );
+        if (phase.isEmpty()) return null;
+        Optional<Question> question = phase.get().getQuestions().stream().min(Comparator.comparingLong(Question::getSerial));
+        return question.orElse(null);
+    }
+
     public boolean delete(Long questionId) {
         questionRepository.deleteById(questionId);
         return true;

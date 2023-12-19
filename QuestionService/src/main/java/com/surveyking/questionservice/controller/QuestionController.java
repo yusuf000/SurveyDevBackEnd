@@ -54,6 +54,15 @@ public class QuestionController {
         return Mono.just(ResponseEntity.ok(questionService.getByPhaseId(phaseId)));
     }
 
+    @GetMapping("/start")
+    @PreAuthorize("hasAuthority(@Privilege.QUESTION_INFO)" + "&& @ownershipCheckService.checkProjectMembershipFromPhaseId(#phaseId, #userId)")
+    public Mono<ResponseEntity<Question>> startPhase(
+            @RequestParam("phaseId") Long phaseId,
+            @RequestHeader(value = "userId") String userId
+    ) {
+        return Mono.just(ResponseEntity.ok(questionService.startPhase(phaseId)));
+    }
+
     @GetMapping(value = "", params = "questionId")
     @PreAuthorize("hasAuthority(@Privilege.QUESTION_INFO)" + "&& @ownershipCheckService.checkProjectMembershipFromQuestionId(#questionId, #userId)")
     public Mono<ResponseEntity<Question>> getByQuestionId(
