@@ -135,6 +135,8 @@ public class QuestionService {
     public Question getNext(String userId, Long questionId) {
         Optional<Question> currentQuestion = questionRepository.findById(questionId);
         if (currentQuestion.isEmpty()) return null;
+        //todo
+        //******bug, returning list of responsecache object but expecting list of answers//
 
         List<Answer> answers = surveyServiceClient.getAllForUser(currentQuestion.get().getPhase().getProject().getSasCode(), userId, PrivilegeConstants.ANSWER_INFO).getBody();
 
