@@ -8,7 +8,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Answer {
-    private AnswerId id;
+    private Long questionId;
     private Long choiceId;
     private String description;
+    private Long serial;
 }

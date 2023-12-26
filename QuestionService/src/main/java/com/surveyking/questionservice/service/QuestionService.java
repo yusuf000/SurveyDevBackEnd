@@ -4,6 +4,7 @@ import com.surveyking.questionservice.client.SurveyServiceClient;
 import com.surveyking.questionservice.constants.PrivilegeConstants;
 import com.surveyking.questionservice.model.Answer;
 import com.surveyking.questionservice.model.QuestionRequest;
+import com.surveyking.questionservice.model.ResponseCache;
 import com.surveyking.questionservice.model.entity.*;
 import com.surveyking.questionservice.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -135,11 +136,16 @@ public class QuestionService {
     public Question getNext(String userId, Long questionId) {
         Optional<Question> currentQuestion = questionRepository.findById(questionId);
         if (currentQuestion.isEmpty()) return null;
-        //todo
-        //******bug, returning list of responsecache object but expecting list of answers//
-
-        List<Answer> answers = surveyServiceClient.getAllForUser(currentQuestion.get().getPhase().getProject().getSasCode(), userId, PrivilegeConstants.ANSWER_INFO).getBody();
-
+        List<ResponseCache> responses = surveyServiceClient.getAllForUser(currentQuestion.get().getPhase().getProject().getSasCode(), userId, PrivilegeConstants.ANSWER_INFO).getBody();
+        List<Answer> answers = new ArrayList<>();
+        if(responses != null){
+            for(ResponseCache response: responses){
+                for(Answer answer: response.getAnswers()){
+                    answer.setQuestionId(response.getId().getQuestionId());
+                    answers.add(answer);
+                }
+            }
+        }
         Question question = getQuestion(currentQuestion.get(), answers);
         if (question != null) {
             Set<Choice> choices = getChoices(question.getChoices(), answers);
@@ -241,7 +247,7 @@ public class QuestionService {
     private boolean checkFilter(Answer answer, Long choiceIdToFilter, Long questionIdToFilter, String valueEqual, String valueSmaller, String valueGreater) {
         if(choiceIdToFilter == null || questionIdToFilter == null) return true;
         if (answer.getChoiceId().longValue() == choiceIdToFilter.longValue()
-                && answer.getId().getQuestionId().longValue() == questionIdToFilter.longValue()) {
+                && answer.getQuestionId().longValue() == questionIdToFilter.longValue()) {
             Optional<Choice> choice = choiceRepository.findById(choiceIdToFilter);
             if (choice.isPresent()) {
                 return (valueEqual == null || valueEqual.equals(choice.get().getValue()))
