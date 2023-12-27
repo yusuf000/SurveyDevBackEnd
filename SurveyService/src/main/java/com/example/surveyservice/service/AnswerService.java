@@ -48,6 +48,7 @@ public class AnswerService {
                             .questionId(request.getQuestionId())
                             .build())
                     .sasCode(request.getSasCode())
+                    .phaseId(request.getPhaseId())
                     .answers(Set.of(answer))
                     .build();
             responseRedisRepository.save(response);
@@ -65,16 +66,17 @@ public class AnswerService {
         return responseRedisRepository.findAllByIdQuestionId(questionId);
     }
 
-    public List<ResponseCache> getAllForUser(String sasCode, String userId) {
-        return responseRedisRepository.findAllBySasCodeAndIdUserId(sasCode, userId);
+    public List<ResponseCache> getAllForUser(Long phaseId, String userId) {
+        return responseRedisRepository.findAllByPhaseIdAndIdUserId(phaseId, userId);
     }
 
     public boolean completeSurveyForUser(String sasCode, String userId) {
-        List<ResponseCache> responsesInCache = getAllForUser(sasCode, userId);
+        List<ResponseCache> responsesInCache = responseRedisRepository.findAllBySasCodeAndIdUserId(sasCode, userId);
         List<Response> responses = new ArrayList<>();
         for (ResponseCache responseCache : responsesInCache) {
             responses.add(Response.builder()
                     .id(responseCache.getId())
+                    .phaseId(responseCache.getPhaseId())
                     .sasCode(responseCache.getSasCode())
                     .answers(responseCache.getAnswers())
                     .build());

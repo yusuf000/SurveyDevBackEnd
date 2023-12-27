@@ -12,6 +12,7 @@ import lombok.Setter;
 public class ResponseRequest {
     private Long questionId;
     private String sasCode;
+    private Long phaseId;
     private Long choiceId;
     private Long serial;
     private String description;

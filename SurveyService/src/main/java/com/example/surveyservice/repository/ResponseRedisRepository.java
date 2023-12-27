@@ -10,5 +10,6 @@ import java.util.List;
 @Repository
 public interface ResponseRedisRepository extends CrudRepository<ResponseCache, AnswerId> {
     List<ResponseCache> findAllByIdQuestionId(Long questionId);
+    List<ResponseCache> findAllByPhaseIdAndIdUserId(Long phaseId, String userId);
     List<ResponseCache> findAllBySasCodeAndIdUserId(String sasCode, String userId);
 }

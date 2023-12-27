@@ -18,10 +18,10 @@ import java.util.Set;
 public class ResponseCache {
     @Id
     private AnswerId id;
-
+    @Indexed
+    private Long phaseId;
     @Indexed
     private String sasCode;
-
     @Reference
     private Set<Answer> answers;
 }

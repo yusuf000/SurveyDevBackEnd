@@ -31,8 +31,8 @@ public class AnswerController {
 
     @GetMapping(value = "")
     @PreAuthorize("hasAuthority(@Privilege.ANSWER_INFO)")
-    public ResponseEntity<List<ResponseCache> > getAllForUser(@RequestParam String sasCode, @RequestHeader(value = "userId") String userId){
-        return ResponseEntity.ok(answerService.getAllForUser(sasCode,userId));
+    public ResponseEntity<List<ResponseCache> > getAllForUser(@RequestParam Long phaseId, @RequestHeader(value = "userId") String userId){
+        return ResponseEntity.ok(answerService.getAllForUser(phaseId,userId));
     }
 
     @PostMapping(value = "/complete")

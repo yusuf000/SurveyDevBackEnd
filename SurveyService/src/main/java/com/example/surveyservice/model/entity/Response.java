@@ -16,8 +16,7 @@ import java.util.Set;
 public class Response {
     @Id
     private AnswerId id;
-
     private String sasCode;
-
+    private Long phaseId;
     private Set<Answer> answers;
 }
