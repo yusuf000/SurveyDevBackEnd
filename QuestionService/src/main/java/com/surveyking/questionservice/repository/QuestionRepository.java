@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
-    Optional<Question> findBySerial(Long Serial);
+    Optional<Question> findBySerialAndPhaseId(Long Serial, Long phaseId);
 
     @Query("select max(q.serial) from question q where q.phase.id = :phaseId")
     Long findMaxSerial(Long phaseId);

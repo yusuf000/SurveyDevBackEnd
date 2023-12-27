@@ -136,7 +136,7 @@ public class QuestionService {
     public Question getNext(String userId, Long questionId) {
         Optional<Question> currentQuestion = questionRepository.findById(questionId);
         if (currentQuestion.isEmpty()) return null;
-        List<ResponseCache> responses = surveyServiceClient.getAllForUser(currentQuestion.get().getPhase().getProject().getSasCode(), userId, PrivilegeConstants.ANSWER_INFO).getBody();
+        List<ResponseCache> responses = surveyServiceClient.getAllForUser(currentQuestion.get().getPhase().getId(), userId, PrivilegeConstants.ANSWER_INFO).getBody();
         List<Answer> answers = new ArrayList<>();
         if(responses != null){
             for(ResponseCache response: responses){
@@ -205,7 +205,7 @@ public class QuestionService {
     private Question getQuestion(Question currentQuestion, List<Answer> answers) {
 
         Long nextSerial = currentQuestion.getSerial() + 1;
-        Optional<Question> nextQuestion = questionRepository.findBySerial(nextSerial);
+        Optional<Question> nextQuestion = questionRepository.findBySerialAndPhaseId(nextSerial, currentQuestion.getPhase().getId());
         if (nextQuestion.isEmpty()) return null;
         if (nextQuestion.get().getQuestionFilter() == null) return nextQuestion.get();
 

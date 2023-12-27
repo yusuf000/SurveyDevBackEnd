@@ -5,8 +5,11 @@ import com.surveyking.questionservice.model.ProjectType;
 import com.surveyking.questionservice.util.Constants;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SortNatural;
 
+import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 
 @Getter
 @Setter
@@ -48,6 +51,7 @@ public class Project {
     private ProjectType projectType;
 
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "project")
+    @OrderBy("serial ASC")
     private Set<Phase> phases;
 
     @ElementCollection(targetClass = String.class)
