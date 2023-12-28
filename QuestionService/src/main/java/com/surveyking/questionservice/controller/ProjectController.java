@@ -2,6 +2,7 @@ package com.surveyking.questionservice.controller;
 
 import com.surveyking.questionservice.model.ProjectRequest;
 import com.surveyking.questionservice.model.entity.Project;
+import com.surveyking.questionservice.model.entity.ProjectCompletionStatus;
 import com.surveyking.questionservice.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -74,5 +75,20 @@ public class ProjectController {
     public Mono<ResponseEntity<Integer>> getRunningProjectCount(
             @RequestHeader(value = "userId") String userId) {
         return Mono.just(ResponseEntity.ok(projectService.getRunningProjectCount(userId)));
+    }
+
+    @PostMapping("/complete")
+    @PreAuthorize("hasAuthority(@Privilege.PROJECT_INFO)" + "&& @ownershipCheckService.checkProjectOwner(#sasCode, #userId)")
+    public Mono<ResponseEntity<Boolean>> completeProjectSurvey(
+            @RequestParam("sasCode") String sasCode,
+            @RequestHeader(value = "userId") String userId) {
+        return Mono.just(ResponseEntity.ok(projectService.completeProjectSurvey(sasCode,userId)));
+    }
+
+    @GetMapping("/status")
+    @PreAuthorize("hasAuthority(@Privilege.PROJECT_INFO)")
+    public Mono<ResponseEntity<List<ProjectCompletionStatus>>> isAlreadyCompleted(
+            @RequestHeader(value = "userId") String userId) {
+        return Mono.just(ResponseEntity.ok(projectService.getProjectCompletionStatuses(userId)));
     }
 }

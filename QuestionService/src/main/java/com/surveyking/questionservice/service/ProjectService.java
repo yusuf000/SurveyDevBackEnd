@@ -1,8 +1,12 @@
 package com.surveyking.questionservice.service;
 
+import com.surveyking.questionservice.client.SurveyServiceClient;
+import com.surveyking.questionservice.constants.PrivilegeConstants;
 import com.surveyking.questionservice.model.ProjectRequest;
 import com.surveyking.questionservice.model.entity.Phase;
 import com.surveyking.questionservice.model.entity.Project;
+import com.surveyking.questionservice.model.entity.ProjectCompletionStatus;
+import com.surveyking.questionservice.repository.ProjectCompletionStatusRepository;
 import com.surveyking.questionservice.repository.ProjectRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +21,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class ProjectService {
     private final ProjectRepository projectRepository;
+    private final ProjectCompletionStatusRepository projectCompletionStatusRepository;
+    private final SurveyServiceClient surveyServiceClient;
 
     public boolean add(ProjectRequest projectRequest, String userId) {
         Project project = Project.builder()
@@ -95,7 +101,19 @@ public class ProjectService {
 
     public int getRunningProjectCount(String userId) {
         Optional<List<Project>> runningProjects = projectRepository.findProjectByOwnerAndStatus(userId, "running");
-        if(runningProjects.isEmpty()) return 0;
+        if (runningProjects.isEmpty()) return 0;
         return runningProjects.get().size();
+    }
+
+    public Boolean completeProjectSurvey(String sasCode, String userId) {
+        projectCompletionStatusRepository.save(ProjectCompletionStatus.builder()
+                .userId(userId)
+                .sasCode(sasCode)
+                .build());
+        return surveyServiceClient.completeSurvey(sasCode, userId, PrivilegeConstants.ANSWER_INFO).getBody();
+    }
+
+    public List<ProjectCompletionStatus> getProjectCompletionStatuses(String userId){
+        return projectCompletionStatusRepository.findProjectCompletionStatusByUserId(userId);
     }
 }
