@@ -12,4 +12,5 @@ import java.util.List;
 public class BarChartResponse {
     private List<String> labels;
     private DataSet datasets;
+    private Long total;
 }

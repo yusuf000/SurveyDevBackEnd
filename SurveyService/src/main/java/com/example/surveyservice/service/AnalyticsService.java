@@ -23,6 +23,7 @@ public class AnalyticsService {
         calendar.add(Calendar.DATE, -6);
         List<String> labels = new ArrayList<>();
         List<Long> data = new ArrayList<>();
+        Long total = responseRepository.countBySasCode(sasCode);
 
         for(int i = 0; i < 7; i++){
             String currentDate = sdf.format(new Date(calendar.getTimeInMillis()));
@@ -37,6 +38,7 @@ public class AnalyticsService {
                         .label("responses")
                         .data(data)
                         .build())
+                .total(total)
                 .build();
     }
 }
