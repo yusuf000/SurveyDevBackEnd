@@ -19,4 +19,5 @@ public class Response {
     private String sasCode;
     private Long phaseId;
     private Set<Answer> answers;
+    private String date;
 }

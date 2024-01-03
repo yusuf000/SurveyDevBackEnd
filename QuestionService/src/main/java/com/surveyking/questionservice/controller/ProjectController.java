@@ -1,6 +1,7 @@
 package com.surveyking.questionservice.controller;
 
 import com.surveyking.questionservice.model.ProjectRequest;
+import com.surveyking.questionservice.model.RunningProjectResponse;
 import com.surveyking.questionservice.model.entity.Project;
 import com.surveyking.questionservice.model.entity.ProjectCompletionStatus;
 import com.surveyking.questionservice.service.ProjectService;
@@ -72,9 +73,9 @@ public class ProjectController {
 
     @GetMapping("/running")
     @PreAuthorize("hasAuthority(@Privilege.PROJECT_INFO)")
-    public Mono<ResponseEntity<Integer>> getRunningProjectCount(
+    public Mono<ResponseEntity<List<RunningProjectResponse>>> getRunningProjectCount(
             @RequestHeader(value = "userId") String userId) {
-        return Mono.just(ResponseEntity.ok(projectService.getRunningProjectCount(userId)));
+        return Mono.just(ResponseEntity.ok(projectService.getRunningProject(userId)));
     }
 
     @PostMapping("/complete")

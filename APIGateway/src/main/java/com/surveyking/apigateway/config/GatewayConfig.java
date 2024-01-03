@@ -18,7 +18,10 @@ public class GatewayConfig {
                 .route("authentication-service", r -> r.path("/api/v1/auth/**")
                         .filters(f -> f.filter(filter))
                         .uri("lb://AUTHENTICATION-SERVICE"))
-                .route("survey-service", r -> r.path("/api/v1/answer/**")
+                .route("survey-service", r -> r.path(
+                                "/api/v1/answer/**",
+                                "/api/v1/analytics/**"
+                        )
                         .filters(f -> f.filter(filter))
                         .uri("lb://SURVEY-SERVICE"))
                 .route("question-service", r -> r.path(

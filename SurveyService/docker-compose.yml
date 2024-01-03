@@ -1,11 +1,11 @@
 version: "3.8"
 services:
- # mongodb:
- #   image: mongo
- #   ports:
- #     - "27017:27017"
- #   volumes:
- #     - survey_king:/data/db
+  mongodb:
+    image: mongo:4.4.6
+    ports:
+      - "27017:27017"
+    volumes:
+      - .:/data/db
   redis-server:
     container_name: redis
     image: redis

@@ -11,10 +11,8 @@ import com.example.surveyservice.repository.ResponseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -73,12 +71,14 @@ public class AnswerService {
     public boolean completeSurveyForUser(String sasCode, String userId) {
         List<ResponseCache> responsesInCache = responseRedisRepository.findAllBySasCodeAndIdUserId(sasCode, userId);
         List<Response> responses = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         for (ResponseCache responseCache : responsesInCache) {
             responses.add(Response.builder()
                     .id(responseCache.getId())
                     .phaseId(responseCache.getPhaseId())
                     .sasCode(responseCache.getSasCode())
                     .answers(responseCache.getAnswers())
+                    .date(sdf.format(new Date()))
                     .build());
         }
         responseRepository.saveAll(responses);

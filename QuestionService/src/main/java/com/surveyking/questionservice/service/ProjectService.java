@@ -3,6 +3,7 @@ package com.surveyking.questionservice.service;
 import com.surveyking.questionservice.client.SurveyServiceClient;
 import com.surveyking.questionservice.constants.PrivilegeConstants;
 import com.surveyking.questionservice.model.ProjectRequest;
+import com.surveyking.questionservice.model.RunningProjectResponse;
 import com.surveyking.questionservice.model.entity.Phase;
 import com.surveyking.questionservice.model.entity.Project;
 import com.surveyking.questionservice.model.entity.ProjectCompletionStatus;
@@ -12,10 +13,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -99,10 +101,19 @@ public class ProjectService {
         }
     }
 
-    public int getRunningProjectCount(String userId) {
+    public List<RunningProjectResponse> getRunningProject(String userId) {
         Optional<List<Project>> runningProjects = projectRepository.findProjectByOwnerAndStatus(userId, "running");
-        if (runningProjects.isEmpty()) return 0;
-        return runningProjects.get().size();
+        if (runningProjects.isEmpty()) return List.of();
+        return runningProjects.get().stream().map(p-> {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            long difference = 0;
+            try {
+                difference = new Date().getTime() - (sdf.parse(p.getStartDate()).getTime());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return RunningProjectResponse.builder().sasCode(p.getSasCode()).projectName(p.getName()).startedFor(TimeUnit.DAYS.convert(difference, TimeUnit.MILLISECONDS)+"").build();
+        }).collect(Collectors.toList());
     }
 
     public Boolean completeProjectSurvey(String sasCode, String userId) {

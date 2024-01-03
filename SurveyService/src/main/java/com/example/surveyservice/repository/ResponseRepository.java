@@ -9,4 +9,5 @@ import java.util.List;
 public interface ResponseRepository extends MongoRepository<Response, AnswerId> {
     List<Response> findAllByIdQuestionId(Long questionId);
     List<Response> findAllBySasCodeAndIdUserId(String sasCode, String userId);
+    Long countByDateAndSasCode(String date, String sasCode);
 }
