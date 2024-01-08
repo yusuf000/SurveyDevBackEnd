@@ -2,8 +2,12 @@ package com.example.surveyservice.service;
 
 import com.example.surveyservice.model.BarChartResponse;
 import com.example.surveyservice.model.DataSet;
+import com.example.surveyservice.model.entity.Response;
 import com.example.surveyservice.repository.ResponseRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -40,5 +44,10 @@ public class AnalyticsService {
                         .build())
                 .total(total)
                 .build();
+    }
+
+    public Page<Response> findAllByQuestionId(Long questionId, Integer pageNo){
+        Pageable pageable = PageRequest.of(pageNo, 10);
+        return responseRepository.findAllByIdQuestionId(questionId, pageable);
     }
 }
