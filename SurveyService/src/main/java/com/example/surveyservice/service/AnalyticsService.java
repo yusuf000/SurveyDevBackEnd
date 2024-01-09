@@ -1,6 +1,7 @@
 package com.example.surveyservice.service;
 
 import com.example.surveyservice.model.BarChartResponse;
+import com.example.surveyservice.model.Chart;
 import com.example.surveyservice.model.DataSet;
 import com.example.surveyservice.model.entity.Response;
 import com.example.surveyservice.repository.ResponseRepository;
@@ -49,5 +50,9 @@ public class AnalyticsService {
     public Page<Response> findAllByQuestionId(Long questionId, Integer pageNo){
         Pageable pageable = PageRequest.of(pageNo, 10);
         return responseRepository.findAllByIdQuestionId(questionId, pageable);
+    }
+
+    public List<Chart> findChartByQuestionId(Long questionId){
+        return responseRepository.findChartByQuestionId(questionId);
     }
 }
