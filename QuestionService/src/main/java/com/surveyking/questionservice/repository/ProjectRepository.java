@@ -9,6 +9,8 @@ import java.util.Optional;
 public interface ProjectRepository extends JpaRepository<Project, Long> {
     Optional<Project> findProjectBySasCode(String code);
     Optional<List<Project>> findProjectByOwner(String owner);
+
+    Optional<List<Project>> findByMembersContains(String member);
     void deleteBySasCode(String code);
 
     Optional<List<Project>> findProjectByOwnerAndStatus(String owner, String status);

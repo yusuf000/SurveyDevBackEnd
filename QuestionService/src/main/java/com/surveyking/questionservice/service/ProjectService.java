@@ -64,7 +64,7 @@ public class ProjectService {
     }
 
     public Optional<List<Project>> getAll(String userId) {
-        return projectRepository.findProjectByOwner(userId);
+        return projectRepository.findByMembersContains(userId);
     }
 
     public Project get(String sasCode) {
