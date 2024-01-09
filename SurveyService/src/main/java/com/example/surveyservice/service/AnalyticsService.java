@@ -28,12 +28,12 @@ public class AnalyticsService {
         calendar.add(Calendar.DATE, -6);
         List<String> labels = new ArrayList<>();
         List<Long> data = new ArrayList<>();
-        Long total = responseRepository.countBySasCode(sasCode);
+        Long total = responseRepository.findCountBySasCode(sasCode);
 
         for(int i = 0; i < 7; i++){
             String currentDate = sdf.format(new Date(calendar.getTimeInMillis()));
             labels.add(currentDate.substring(0,5));
-            data.add(responseRepository.countByDateAndSasCode(currentDate, sasCode));
+            data.add(responseRepository.findCountByDateAndGroupBySasCodeAndUserId(currentDate, sasCode));
             calendar.add(Calendar.DATE, 1);
         }
 

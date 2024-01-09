@@ -11,12 +11,25 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 public interface ResponseRepository extends MongoRepository<Response, AnswerId> {
-    List<Response> findAllByIdQuestionId(Long questionId);
-    List<Response> findAllBySasCodeAndIdUserId(String sasCode, String userId);
-    Long countByDateAndSasCode(String date, String sasCode);
-    Long countBySasCode(String sasCode);
+    @Aggregation(
+            pipeline = {
+                    "{'$match':{'sasCode' : ?0}}",
+                    "{'$group' : {'_id': '$_id.userId'}}",
+                    "{'$count' :  'long'}"
+            }
+    )
+    Long findCountBySasCode(String sasCode);
 
     Page<Response> findAllByIdQuestionId(Long questionId, Pageable pageable);
+
+    @Aggregation(
+            pipeline = {
+                    "{'$match':{'date': ?0, 'sasCode' : ?1}}",
+                    "{'$group' : {'_id': '$_id.userId'}}",
+                    "{'$count' :  'long'}"
+            }
+    )
+    Long findCountByDateAndGroupBySasCodeAndUserId(String date, String sasCode);
 
     @Aggregation(
             pipeline = {
