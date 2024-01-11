@@ -1,5 +1,6 @@
 package com.surveyking.questionservice.repository;
 
+import com.surveyking.questionservice.model.Status;
 import com.surveyking.questionservice.model.entity.Project;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -13,5 +14,5 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     Optional<List<Project>> findByMembersContains(String member);
     void deleteBySasCode(String code);
 
-    Optional<List<Project>> findProjectByOwnerAndStatus(String owner, String status);
+    Optional<List<Project>> findProjectByOwnerAndStatus(String owner, Status status);
 }

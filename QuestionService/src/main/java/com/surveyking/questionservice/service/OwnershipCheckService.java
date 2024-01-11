@@ -33,6 +33,15 @@ public class OwnershipCheckService {
         }
     }
 
+    public boolean checkProjectMember(String sasCode, String userId){
+        if(sasCode == null || sasCode.isEmpty()) return false;
+        Optional<Project> project = projectRepository.findProjectBySasCode(sasCode);
+        if(project.isEmpty()) return false;
+        else{
+            return project.get().getMembers().contains(userId);
+        }
+    }
+
     public boolean checkProjectMembershipFromPhaseId(Long phaseId, String userId){
         if(phaseId == null) return false;
         Optional<Phase> phase = phaseRepository.findById(phaseId);

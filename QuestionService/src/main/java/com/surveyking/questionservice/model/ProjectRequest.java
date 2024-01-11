@@ -22,8 +22,6 @@ public class ProjectRequest {
 
     private String endDate;
 
-    private String status;
-
     private String sasCode;
 
     private Long jobNumber;

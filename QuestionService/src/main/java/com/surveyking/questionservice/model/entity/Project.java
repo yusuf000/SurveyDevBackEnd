@@ -2,6 +2,7 @@ package com.surveyking.questionservice.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.surveyking.questionservice.model.ProjectType;
+import com.surveyking.questionservice.model.Status;
 import com.surveyking.questionservice.util.Constants;
 import jakarta.persistence.*;
 import lombok.*;
@@ -38,8 +39,8 @@ public class Project {
     @Column(name = Constants.endDate, nullable = false, length = 50)
     private String endDate;
 
-    @Column(nullable = false, length = 20)
-    private String status;
+    @Column(nullable = false)
+    private Status status;
 
     @Column(name = Constants.sasCode, unique = true, nullable = false, length = 20)
     private String sasCode;

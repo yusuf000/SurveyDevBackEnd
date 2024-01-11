@@ -4,6 +4,7 @@ import com.surveyking.questionservice.client.SurveyServiceClient;
 import com.surveyking.questionservice.constants.PrivilegeConstants;
 import com.surveyking.questionservice.model.ProjectRequest;
 import com.surveyking.questionservice.model.RunningProjectResponse;
+import com.surveyking.questionservice.model.Status;
 import com.surveyking.questionservice.model.entity.Phase;
 import com.surveyking.questionservice.model.entity.Project;
 import com.surveyking.questionservice.model.entity.ProjectCompletionStatus;
@@ -33,7 +34,7 @@ public class ProjectService {
                 .clientName(projectRequest.getClientName())
                 .startDate(projectRequest.getStartDate())
                 .endDate(projectRequest.getEndDate())
-                .status(projectRequest.getStatus())
+                .status(Status.CREATED)
                 .sasCode(projectRequest.getSasCode())
                 .jobNumber(projectRequest.getJobNumber())
                 .build();
@@ -102,7 +103,7 @@ public class ProjectService {
     }
 
     public List<RunningProjectResponse> getRunningProject(String userId) {
-        Optional<List<Project>> runningProjects = projectRepository.findProjectByOwnerAndStatus(userId, "running");
+        Optional<List<Project>> runningProjects = projectRepository.findProjectByOwnerAndStatus(userId, Status.RUNNING);
         if (runningProjects.isEmpty()) return List.of();
         return runningProjects.get().stream().map(p-> {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -126,5 +127,25 @@ public class ProjectService {
 
     public List<ProjectCompletionStatus> getProjectCompletionStatuses(String userId){
         return projectCompletionStatusRepository.findProjectCompletionStatusByUserId(userId);
+    }
+
+    public Boolean startProject(String sasCode){
+        Optional<Project> project = projectRepository.findProjectBySasCode(sasCode);
+        if(project.isEmpty()) return false;
+        else{
+            project.get().setStatus(Status.RUNNING);
+            projectRepository.save(project.get());
+            return true;
+        }
+    }
+
+    public Boolean endProject(String sasCode){
+        Optional<Project> project = projectRepository.findProjectBySasCode(sasCode);
+        if(project.isEmpty()) return false;
+        else{
+            project.get().setStatus(Status.FINISHED);
+            projectRepository.save(project.get());
+            return true;
+        }
     }
 }

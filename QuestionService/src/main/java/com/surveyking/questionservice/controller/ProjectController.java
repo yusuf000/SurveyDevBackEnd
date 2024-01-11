@@ -79,7 +79,7 @@ public class ProjectController {
     }
 
     @PostMapping("/complete")
-    @PreAuthorize("hasAuthority(@Privilege.PROJECT_INFO)" + "&& @ownershipCheckService.checkProjectOwner(#sasCode, #userId)")
+    @PreAuthorize("hasAuthority(@Privilege.PROJECT_INFO)" + "&& @ownershipCheckService.checkProjectMember(#sasCode, #userId)")
     public Mono<ResponseEntity<Boolean>> completeProjectSurvey(
             @RequestParam("sasCode") String sasCode,
             @RequestHeader(value = "userId") String userId) {
@@ -91,5 +91,25 @@ public class ProjectController {
     public Mono<ResponseEntity<List<ProjectCompletionStatus>>> isAlreadyCompleted(
             @RequestHeader(value = "userId") String userId) {
         return Mono.just(ResponseEntity.ok(projectService.getProjectCompletionStatuses(userId)));
+    }
+
+    @PostMapping("/start")
+    @PreAuthorize("hasAuthority(@Privilege.PROJECT_CREATE)" + "&& @ownershipCheckService.checkProjectOwner(#sasCode, #userId)")
+
+    public Mono<ResponseEntity<Boolean>> startProject(
+            @RequestParam("sasCode") String sasCode,
+            @RequestHeader(value = "userId") String userId
+    ){
+        return Mono.just(ResponseEntity.ok(projectService.startProject(sasCode)));
+    }
+
+    @PostMapping("/end")
+    @PreAuthorize("hasAuthority(@Privilege.PROJECT_CREATE)" + "&& @ownershipCheckService.checkProjectOwner(#sasCode, #userId)")
+
+    public Mono<ResponseEntity<Boolean>> endProject(
+            @RequestParam("sasCode") String sasCode,
+            @RequestHeader(value = "userId") String userId
+    ){
+        return Mono.just(ResponseEntity.ok(projectService.endProject(sasCode)));
     }
 }
