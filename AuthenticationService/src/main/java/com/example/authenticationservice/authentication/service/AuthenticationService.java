@@ -76,7 +76,7 @@ public class AuthenticationService {
     }
 
     private SimpleMailMessage constructResetTokenEmail(String token, User user) {
-        String url = "http://localhost:8080/user/changePassword?token=" + token;
+        String url = "http://localhost:3000/authentication/change-password?token=" + token;
         String message = "Dear "+user.getName()+",\n"+"You've requested a password reset. Reset your password by following this link: "+url+" \n"+"Thanks\n"+"SurveyDevs";
         return constructEmail("Reset Password", message , user);
     }
@@ -89,5 +89,19 @@ public class AuthenticationService {
         email.setTo(user.getUserId());
         email.setFrom("surveydevs@gmail.com");
         return email;
+    }
+
+    public Boolean changePassword(PasswordChangeRequest passwordChangeRequest) {
+        Optional<PasswordResetToken> passwordResetToken = passwordResetTokenRepository.findByToken(passwordChangeRequest.getToken());
+        if(passwordResetToken.isEmpty()) return false;
+        else{
+            if(passwordResetToken.get().getExpiryDate().getTime() < new Date().getTime()) return false;
+            Optional<User> user = userRepository.findByUserId(passwordResetToken.get().getUser().getUserId());
+            if(user.isEmpty()) return false;
+            user.get().setPassword(passwordEncoder.encode(passwordChangeRequest.getPassword()));
+            userRepository.save(user.get());
+            passwordResetTokenRepository.delete(passwordResetToken.get());
+            return true;
+        }
     }
 }

@@ -21,7 +21,7 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/register","/api/v1/auth/resetPassword/**").permitAll()
+                        .requestMatchers("/api/v1/auth/register","/api/v1/auth/reset-password/**","/api/v1/auth/change-password/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())

@@ -1,6 +1,7 @@
 package com.example.authenticationservice.authentication.controller;
 
 import com.example.authenticationservice.authentication.model.AuthenticationResponse;
+import com.example.authenticationservice.authentication.model.PasswordChangeRequest;
 import com.example.authenticationservice.authentication.model.RegisterRequest;
 import com.example.authenticationservice.authentication.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,16 @@ public class AuthenticationController {
         return ResponseEntity.ok(service.generateJWT());
     }
 
-    @PostMapping("/resetPassword")
+    @PostMapping("/reset-password")
     public ResponseEntity<Boolean> resetPassword(
             @RequestParam("email") String userEmail) {
         return ResponseEntity.ok(service.resetPassword(userEmail));
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<Boolean> changePassword(
+            @RequestBody PasswordChangeRequest passwordChangeRequest
+            ){
+        return ResponseEntity.ok(service.changePassword(passwordChangeRequest));
     }
 }
