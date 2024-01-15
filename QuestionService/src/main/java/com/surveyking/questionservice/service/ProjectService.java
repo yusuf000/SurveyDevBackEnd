@@ -133,7 +133,15 @@ public class ProjectService {
         Optional<Project> project = projectRepository.findProjectBySasCode(sasCode);
         if(project.isEmpty()) return false;
         else{
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            try {
+                long difference = new Date().getTime() - (sdf.parse(project.get().getStartDate()).getTime());
+                if(difference < 0) return false;
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             project.get().setStatus(Status.RUNNING);
+            project.get().setStartDate(sdf.format(new Date()));
             projectRepository.save(project.get());
             return true;
         }
@@ -143,7 +151,9 @@ public class ProjectService {
         Optional<Project> project = projectRepository.findProjectBySasCode(sasCode);
         if(project.isEmpty()) return false;
         else{
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             project.get().setStatus(Status.FINISHED);
+            project.get().setEndDate(sdf.format(new Date()));
             projectRepository.save(project.get());
             return true;
         }
