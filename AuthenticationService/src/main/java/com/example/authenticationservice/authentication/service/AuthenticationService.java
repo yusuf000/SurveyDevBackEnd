@@ -76,7 +76,7 @@ public class AuthenticationService {
     }
 
     private SimpleMailMessage constructResetTokenEmail(String token, User user) {
-        String url = "http://localhost:3000/authentication/change-password?token=" + token;
+        String url = "http://surveydevs.com/authentication/change-password?token=" + token;
         String message = "Dear "+user.getName()+",\n"+"You've requested a password reset. Reset your password by following this link: "+url+" \n"+"Thanks\n"+"SurveyDevs";
         return constructEmail("Reset Password", message , user);
     }
