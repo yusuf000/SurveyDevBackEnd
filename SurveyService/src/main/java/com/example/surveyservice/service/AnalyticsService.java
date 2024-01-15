@@ -29,6 +29,7 @@ public class AnalyticsService {
         List<String> labels = new ArrayList<>();
         List<Long> data = new ArrayList<>();
         Long total = responseRepository.findCountBySasCode(sasCode);
+        if(total == null) total = 0L;
 
         for(int i = 0; i < 7; i++){
             String currentDate = sdf.format(new Date(calendar.getTimeInMillis()));
