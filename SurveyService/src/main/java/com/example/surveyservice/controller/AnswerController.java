@@ -36,7 +36,7 @@ public class AnswerController {
     }
 
     @PostMapping(value = "/complete")
-    @PreAuthorize("hasAuthority(@Privilege.ANSWER_INFO)" + "&& @ownershipCheckService.checkProjectMembershipFromProjectSasCode(#sasCode, #userId)")
+    @PreAuthorize("@ownershipCheckService.checkProjectMembershipFromProjectSasCode(#sasCode, #userId)")
     public ResponseEntity<Boolean > completeSurvey(@RequestParam String sasCode, @RequestHeader(value = "userId") String userId){
         return ResponseEntity.ok(answerService.completeSurveyForUser(sasCode,userId));
     }
