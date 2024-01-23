@@ -1,5 +1,6 @@
 package com.surveyking.questionservice.controller;
 
+import com.surveyking.questionservice.exceptions.InvalidExpressionException;
 import com.surveyking.questionservice.model.QuestionFilterRequest;
 import com.surveyking.questionservice.service.QuestionFilterService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class QuestionFilterController {
     public Mono<ResponseEntity<Boolean>> addExpression(
             @RequestBody QuestionFilterRequest request,
             @RequestHeader("userId") String userId
-    ){
+    ) throws InvalidExpressionException {
         return Mono.just(ResponseEntity.ok(questionFilterService.add(request.getQuestionId(), request.getExpressionToEvaluate(), request.getExpressionToShow())));
     }
 

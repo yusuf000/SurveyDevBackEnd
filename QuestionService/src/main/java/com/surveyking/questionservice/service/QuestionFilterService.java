@@ -40,11 +40,11 @@ public class QuestionFilterService {
     }
 
 
-    public Boolean add(long questionId, String expressionToEvaluate, String expressionToShow) {
-        try {
+    public Boolean add(long questionId, String expressionToEvaluate, String expressionToShow) throws InvalidExpressionException {
+
             QuestionFilter questionFilter = getQuestionFilter(0,  expressionToEvaluate, null).getSecond();
             Optional<Question> question = questionRepository.findById(questionId);
-            if (question.isEmpty()) return false;
+            if (question.isEmpty())  throw new InvalidExpressionException("Invalid expression");
             else {
                 questionFilterRepository.deleteByQuestion(question.get());
                 questionFilter.setQuestion(question.get());
@@ -54,9 +54,7 @@ public class QuestionFilterService {
                 questionRepository.save(question.get());
                 return true;
             }
-        }catch (InvalidExpressionException e){
-            return false;
-        }
+
     }
 
     private Pair<Integer, QuestionFilter> getQuestionFilter(int st, String expression, QuestionFilter parentQuestionFilter) throws InvalidExpressionException{
