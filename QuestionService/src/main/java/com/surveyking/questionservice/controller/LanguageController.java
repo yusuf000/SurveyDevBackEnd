@@ -28,7 +28,8 @@ public class LanguageController {
 
     @GetMapping("")
     @PreAuthorize("hasAuthority(@Privilege.LANGUAGE_INFO)")
-    public Mono<ResponseEntity<List<Language>>> get(){
-        return Mono.just(ResponseEntity.ok(languageService.get()));
+    public ResponseEntity<List<Language>> get(){
+        List<Language> response = languageService.get();
+        return ResponseEntity.ok(response);
     }
 }
