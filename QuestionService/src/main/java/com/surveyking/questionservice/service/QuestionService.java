@@ -1,5 +1,8 @@
 package com.surveyking.questionservice.service;
 
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvException;
 import com.surveyking.questionservice.client.SurveyServiceClient;
 import com.surveyking.questionservice.constants.PrivilegeConstants;
 import com.surveyking.questionservice.model.Answer;
@@ -9,7 +12,11 @@ import com.surveyking.questionservice.model.entity.*;
 import com.surveyking.questionservice.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.*;
 
 @Service
@@ -22,6 +29,7 @@ public class QuestionService {
     private final ChoiceRepository choiceRepository;
     private final QuestionTypeRepository questionTypeRepository;
     private final SurveyServiceClient surveyServiceClient;
+    private final ProjectRepository projectRepository;
 
     public boolean add(QuestionRequest request) {
         Optional<Language> language = languageRepository.findLanguageByCode(
@@ -36,7 +44,7 @@ public class QuestionService {
         if (language.isEmpty() || phase.isEmpty() || questionType.isEmpty()) return false;
 
         Long serial = questionRepository.findMaxSerial(request.getPhaseId());
-        if(serial == null) serial = 0L;
+        if (serial == null) serial = 0L;
         else serial++;
 
         Question question = Question.builder()
@@ -69,7 +77,7 @@ public class QuestionService {
         List<Question> questions = new ArrayList<>();
 
         Long serial = questionRepository.findMaxSerial(requests.get(0).getPhaseId());
-        if(serial == null) serial = 0L;
+        if (serial == null) serial = 0L;
         serial++;
 
         for (QuestionRequest request : requests) {
@@ -138,9 +146,9 @@ public class QuestionService {
         if (currentQuestion.isEmpty()) return null;
         List<ResponseCache> responses = surveyServiceClient.getAllForUser(currentQuestion.get().getPhase().getId(), userId, PrivilegeConstants.ANSWER_INFO).getBody();
         List<Answer> answers = new ArrayList<>();
-        if(responses != null){
-            for(ResponseCache response: responses){
-                for(Answer answer: response.getAnswers()){
+        if (responses != null) {
+            for (ResponseCache response : responses) {
+                for (Answer answer : response.getAnswers()) {
                     answer.setQuestionId(response.getId().getQuestionId());
                     answers.add(answer);
                 }
@@ -163,7 +171,7 @@ public class QuestionService {
 
     private Set<Choice> getChoices(Set<Choice> choices, List<Answer> answers) {
         Set<Choice> finalChoices = new HashSet<>();
-        if(choices == null || choices.isEmpty()) return finalChoices;
+        if (choices == null || choices.isEmpty()) return finalChoices;
 
         for (Choice choice : choices) {
             if (!skipChoice(choice.getChoiceFilters(), answers)) {
@@ -245,7 +253,7 @@ public class QuestionService {
     }
 
     private boolean checkFilter(Answer answer, Long choiceIdToFilter, Long questionIdToFilter, String valueEqual, String valueSmaller, String valueGreater) {
-        if(choiceIdToFilter == null || questionIdToFilter == null) return true;
+        if (choiceIdToFilter == null || questionIdToFilter == null) return true;
         if (answer.getChoiceId().longValue() == choiceIdToFilter.longValue()
                 && answer.getQuestionId().longValue() == questionIdToFilter.longValue()) {
             Optional<Choice> choice = choiceRepository.findById(choiceIdToFilter);
@@ -256,5 +264,87 @@ public class QuestionService {
             }
         }
         return false;
+    }
+
+    public Boolean addFromCSV(String sasCode, MultipartFile file) {
+        try {
+            Reader reader = new InputStreamReader(file.getInputStream());
+            CSVReader csvReader = new CSVReaderBuilder(reader).build();
+            List<String[]> rows = csvReader.readAll();
+            csvReader.close();
+            return parseCSV(rows, sasCode);
+        } catch (IOException | CsvException e) {
+            return false;
+        }
+    }
+
+    private boolean parseCSV(List<String[]> rows, String sasCode){
+        Optional<Project> project = projectRepository.findProjectBySasCode(sasCode);
+        if (project.isEmpty()) {
+            return false;
+        }
+        Question currentQuestion = null;
+
+        long qSerial = 0L;
+        long cSerial = 0L;
+        for (String[] row : rows) {
+            if (!row[0].isEmpty()) {
+                if (currentQuestion != null) {
+                    questionRepository.save(currentQuestion);
+                }
+
+                Phase currentPhase;
+                if (row[1].isEmpty()) return false;
+                Optional<Phase> phase = phaseRepository.findByProjectSasCodeAndName(sasCode, row[1]);
+                if (phase.isEmpty()) return false;
+                currentPhase = phase.get();
+
+                Language currentLanguage;
+                if (row[2].isEmpty()) return false;
+                Optional<Language> language = languageRepository.findLanguageByCode(row[2]);
+                if (language.isEmpty()) currentLanguage = languageRepository.findLanguageByCode("eng").get();
+                else currentLanguage = language.get();
+
+                QuestionType questionType;
+                if (!row[3].isEmpty())
+                    questionType = questionTypeRepository.findQuestionTypeByName("multiple-choice").get();
+                else questionType = questionTypeRepository.findQuestionTypeByName("descriptive").get();
+
+                currentQuestion = Question.builder()
+                        .description(row[0])
+                        .serial(qSerial++)
+                        .phase(currentPhase)
+                        .language(currentLanguage)
+                        .choices(new HashSet<>())
+                        .questionType(questionType)
+                        .build();
+                cSerial = 0L;
+            }
+
+
+            Choice choice = Choice.builder()
+                    .question(currentQuestion)
+                    .value(row[3])
+                    .serial(cSerial++)
+                    .choices(new HashSet<>())
+                    .build();
+
+            if (!row[3].isEmpty()) {
+                for (int i = 4; i < row.length; i++) {
+                    choice.getChoices().add(Choice.builder()
+                            .parent(choice)
+                            .serial((long) i - 4L)
+                            .value(row[i])
+                            .build()
+                    );
+                }
+
+                currentQuestion.getChoices().add(choice);
+            }
+        }
+        if (currentQuestion != null) {
+            questionRepository.save(currentQuestion);
+        }
+        return true;
     }
 }

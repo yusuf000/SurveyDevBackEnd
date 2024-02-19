@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -34,6 +35,16 @@ public class QuestionController {
             @RequestHeader(value = "userId") String userId
     ) {
         return Mono.just(ResponseEntity.ok(questionService.add(requests)));
+    }
+
+    @PostMapping("/add-csv")
+    @PreAuthorize("hasAuthority(@Privilege.QUESTION_CREATE)" + "&& @ownershipCheckService.checkProjectOwner(#sasCode, #userId)")
+    public Mono<ResponseEntity<Boolean>> addFromCSV(
+            @RequestParam MultipartFile file,
+            @RequestParam("sasCode") String sasCode,
+            @RequestHeader(value = "userId") String userId
+    ) {
+        return Mono.just(ResponseEntity.ok(questionService.addFromCSV(sasCode, file)));
     }
 
     @PostMapping("/delete")
