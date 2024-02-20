@@ -331,12 +331,14 @@ public class QuestionService {
 
             if (!row[3].isEmpty()) {
                 for (int i = 4; i < row.length; i++) {
-                    choice.getChoices().add(Choice.builder()
-                            .parent(choice)
-                            .serial((long) i - 4L)
-                            .value(row[i])
-                            .build()
-                    );
+                    if(!row[i].isEmpty()){
+                        choice.getChoices().add(Choice.builder()
+                                .parent(choice)
+                                .serial((long) i - 4L)
+                                .value(row[i])
+                                .build()
+                        );
+                    }
                 }
 
                 currentQuestion.getChoices().add(choice);
