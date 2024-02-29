@@ -302,13 +302,13 @@ public class QuestionService {
                 Language currentLanguage;
                 if (row[2].isEmpty()) return false;
                 Optional<Language> language = languageRepository.findLanguageByCode(row[2]);
-                if (language.isEmpty()) currentLanguage = languageRepository.findLanguageByCode("eng").get();
-                else currentLanguage = language.get();
+                if (language.isEmpty()) currentLanguage = languageRepository.findLanguageByCode("eng").orElse(null);
+                else currentLanguage = language.orElse(null);
 
                 QuestionType questionType;
                 if (!row[3].isEmpty())
-                    questionType = questionTypeRepository.findQuestionTypeByName("multiple-choice").get();
-                else questionType = questionTypeRepository.findQuestionTypeByName("descriptive").get();
+                    questionType = questionTypeRepository.findQuestionTypeByName("multiple-choice").orElse(null);
+                else questionType = questionTypeRepository.findQuestionTypeByName("descriptive").orElse(null);
 
                 currentQuestion = Question.builder()
                         .description(row[0])
@@ -341,7 +341,7 @@ public class QuestionService {
                     }
                 }
 
-                currentQuestion.getChoices().add(choice);
+                if(currentQuestion != null) currentQuestion.getChoices().add(choice);
             }
         }
         if (currentQuestion != null) {
